@@ -21,7 +21,7 @@ export default function Arbiter() {
   const checkmateModalRef = useRef<HTMLDivElement>(null)
   
   // Checks for production/development
-  const basePath = window.location.hostname === "localhost" ? "/four-player-chess" : "";
+  const basePath = window.location.hostname === "localhost" ? "/chessed" : "";
 
   // Function for playing a move
   function playMove(playedPiece: Piece, destination: Position): boolean {

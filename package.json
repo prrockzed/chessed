@@ -1,6 +1,6 @@
 {
-  "homepage": "https://prrockzed.github.io/four-player-chess",
-  "name": "four-player-chess",
+  "name": "chessed",
+  "homepage": "https://prrockzed.github.io/chessed",
   "version": "1.0.0",
   "private": true,
   "dependencies": {

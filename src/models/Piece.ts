@@ -17,7 +17,7 @@ export class Piece {
     hasMoved: boolean,
     possibleMoves: Position[] = []
   ) {
-    const basePath = window.location.hostname === "localhost" ? "four-player-chess/" : "";
+    const basePath = window.location.hostname === "localhost" ? "chessed/" : "";
 
     this.image = `${basePath}assets/images/${team}${type}.png`
     this.position = position
