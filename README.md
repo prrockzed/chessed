@@ -132,15 +132,15 @@ If you're interested in supporting the development of chessed further, please co
 
 ## **Contributing**
 
-Want to help make **Chessed** even better? Check out our [CONTRIBUTING.md](CONTRIBUTING.md) for details on how you can contribute to the project.  
+Want to help make **Chessed** even better? Check out our [CONTRIBUTING.md](https://github.com/prrockzed/chessed/blob/main/.github/CONTRIBUTING.md) for details on how you can contribute to the project.  
 
 ---
 
 ## **License, Security, and Code of Conduct**
 
-- **License:** See [LICENSE](LICENSE).  
-- **Security Policy:** See [SECURITY.md](SECURITY.md).  
-- **Code of Conduct:** See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).  
+- **License:** See [LICENSE](https://github.com/prrockzed/chessed/blob/main/LICENSE).  
+- **Security Policy:** See [SECURITY.md](https://github.com/prrockzed/chessed/blob/main/.github/SECURITY.md).  
+- **Code of Conduct:** See [CODE_OF_CONDUCT.md](https://github.com/prrockzed/chessed/blob/main/.github/CODE_OF_CONDUCT.md).  
 
 ---
 

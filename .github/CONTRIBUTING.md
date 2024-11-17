@@ -2,7 +2,7 @@
 
 I know you are eager to contribute, but first, go through the following documents:
 
-1. [Installation](https://github.com/prrockzed/chessed/blob/main/INSTALL.md)
+1. [Installation](https://github.com/prrockzed/chessed/blob/main/README.md#installation-for-local-development)
 2. [Code of Conduct](https://github.com/prrockzed/chessed/blob/main/.github/CODE_OF_CONDUCT.md) — _Required only for first-time contributors. Regular contributors may skip this._
 3. [Release v1.0.0](https://github.com/prrockzed/chessed/releases/tag/v1.0.0)
 
