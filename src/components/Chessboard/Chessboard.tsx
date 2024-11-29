@@ -18,6 +18,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
   const [grabPosition, setGrabPosition] = useState<Position>(
     new Position(-1, -1)
   )
+  const [isClicked, setIsClicked] = useState<boolean>(false)
   const chessboardRef = useRef<HTMLDivElement>(null)
 
   // Function when player grabs a  piece
@@ -44,8 +45,29 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
       element.style.top = `${y}px`
 
       setActivePiece(element)
+      setIsClicked(false)
     }
   }
+
+  // Function when player clicks a piece
+  function clickPiece(e: React.MouseEvent) {
+    const chessboard = chessboardRef.current
+    const element = e.target as HTMLElement
+
+    if (element.classList.contains('chess-piece') && chessboard) {
+      const grabX = Math.floor((e.clientX - chessboard.offsetLeft) / GRID_SIZE)
+      const grabY = Math.abs(
+        Math.abs(
+          Math.ceil((e.clientY - chessboard.offsetTop - 700) / GRID_SIZE)
+        )
+      )
+
+      setGrabPosition(new Position(grabX, grabY))
+      setActivePiece(element)
+      setIsClicked(true)
+    }
+  }
+
 
   // Function when player tries to move a piece
   function movePiece(e: React.MouseEvent) {
@@ -171,8 +193,13 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
   return (
     <>
       <div
-        onMouseMove={(e) => movePiece(e)}
+        onMouseMove={(e) => {
+          if (!isClicked) {
+            movePiece(e)
+          }   
+        }}
         onMouseDown={(e) => grabPiece(e)}
+        onClick={(e) => clickPiece(e)}
         onMouseUp={(e) => dropPiece(e)}
         id='chessboard'
         ref={chessboardRef}
