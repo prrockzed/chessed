@@ -1,12 +1,10 @@
 ## 🚀 Pull Request Overview
 
 ### **Description**  
-Please provide a clear and concise description of the changes made in this pull request.  
+Please provide a clear and concise description of the changes made in this pull request.
 
 ### Summary:
-
-- To check the `[ ]` box, write 'x' between the square brackets
-- Leave the box unchecked if it is not applicable to you
+To check the `[ ]` box, write 'x' between the square brackets (leave the box unchecked if it is not applicable to you)
 
 - [ ] Bug Fix 🐛
 - [ ] New Feature ✨
@@ -34,6 +32,13 @@ Please provide a clear and concise description of the changes made in this pull 
 
 ### **Additional Context**  
 Add any screenshots, references, or notes that might help reviewers understand the changes.  
+
+---
+
+### **Open Source Programs**
+Are you associated with any open source programs (like KWoC, GSSoC etc)? Do mention it here.
+
+(If not, remove this part of the PR)
 
 ---
 
