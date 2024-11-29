@@ -1,8 +1,8 @@
 <div align="center">
   <h1>chessed</h1>
   <h4 align="center">
-  <p>Redefining the way chess is played – Four players, infinite strategies!</p>
- </h4>
+    <p>Redefining the way chess is played – Four players, infinite strategies!</p>
+  </h4>
 
  <p>
     <a href="https://github.com/prrockzed/chessed/releases/latest">
@@ -43,9 +43,9 @@
 - [Visuals](#visuals)
 - [Installation for Local Development](#installation-for-local-development)
 - [Releases](#releases)
-- [Support](#support)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
+- [Support](#support)
 - [Acknowledgment](#acknowledgment)
 
 ---
@@ -105,15 +105,6 @@ This is just the beginning. Stay tuned for more exciting updates and features as
 
 ---
 
-## **Support**
-
-If you like this project, please consider giving it a star ⭐ on GitHub – it helps the project grow and reach more people! Your support is much appreciated!
-</br>
-
-If you're interested in supporting the development of chessed further, please consider [sponsoring this project](https://github.com/sponsors/prrockzed). Your contributions will help cover expenses and enable more frequent updates and enhancements. Thank you for your support!
-
----
-
 ## **Roadmap**
 
 **Vision:** Transform **Chessed** into a versatile chess platform hosting all kinds of chess variants, no matter how unique or experimental.  
@@ -134,20 +125,27 @@ If you're interested in supporting the development of chessed further, please co
 
 Want to help make **Chessed** even better? Check out our [CONTRIBUTING.md](https://github.com/prrockzed/chessed/blob/main/.github/CONTRIBUTING.md) for details on how you can contribute to the project.  
 
+Note : If you are associated with any kind of Open Source Programs (like GSSoC, KWoC etc), do mention that program in the pull request.
+
 ---
 
 ## **License, Security, and Code of Conduct**
 
-- **License:** See [LICENSE](https://github.com/prrockzed/chessed/blob/main/LICENSE).  
-- **Security Policy:** See [SECURITY.md](https://github.com/prrockzed/chessed/blob/main/.github/SECURITY.md).  
-- **Code of Conduct:** See [CODE_OF_CONDUCT.md](https://github.com/prrockzed/chessed/blob/main/.github/CODE_OF_CONDUCT.md).  
+- License: See [LICENSE](https://github.com/prrockzed/chessed/blob/main/LICENSE).  
+- Security Policy: See [SECURITY.md](https://github.com/prrockzed/chessed/blob/main/.github/SECURITY.md).  
+- Code of Conduct: See [CODE_OF_CONDUCT.md](https://github.com/prrockzed/chessed/blob/main/.github/CODE_OF_CONDUCT.md).
+
+---
+
+## **Support**
+
+If you like this project, please consider giving it a star ⭐ on GitHub – it helps the project grow and reach more people! Your support is much appreciated!
+</br>
+
+If you're interested in supporting the development of chessed further, please consider [sponsoring this project](https://github.com/sponsors/prrockzed). Your contributions will help cover expenses and enable more frequent updates and enhancements. Thank you for your support!
 
 ---
 
 ## **Acknowledgment**
 
 Special thanks to [chess.com](https://chess.com) for the inspiration and revolutionizing online chess.  
-
----
-
-### ⭐ **If you like this project, please leave a star on [GitHub](https://github.com/prrockzed/chessed)!**
