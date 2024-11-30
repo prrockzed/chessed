@@ -9,10 +9,9 @@ import { VERTICAL_AXIS, HORIZONTAL_AXIS, GRID_SIZE } from '../../Constants'
 interface Props {
   playMove: (piece: Piece, position: Position) => boolean
   pieces: Piece[]
-  whoseTurn: number
 }
 
-export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
+export default function Chessboard({ playMove, pieces }: Props) {
   // Declaring Constants
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null)
   const [grabPosition, setGrabPosition] = useState<Position>(
@@ -205,7 +204,6 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
         ref={chessboardRef}
       >
         {board}
-        {/* <PlayerName whoseTurn={whoseTurn} /> */}
       </div>
     </>
   )

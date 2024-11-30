@@ -1,0 +1,56 @@
+.game-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.game-layout > .middle-panel {
+  display: flex;
+}
+
+.game-layout > .panel-area, .game-layout > .middle-panel > .panel-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.middle-panels {
+  writing-mode: vertical-rl;
+}
+
+div#left-panel {
+  transform: rotate(-180deg);
+}
+
+.player-panel {
+  padding: 10px 15px;
+  border: 2px solid transparent;
+  border-radius: 20px;
+}
+
+.middle-panel > .chessboard-container {
+  position: relative;
+}
+
+@media all and (max-width: 768px) {
+  /* phone styles here */
+  .game-layout > .panel-area, .game-layout > .middle-panel > .panel-area {
+    padding: 2px;
+  }
+
+  .player-panel > .player-name {
+    display: none;
+  }
+  
+  .middle-panels > .player-panel {
+    padding: 0;
+    height: 100%;
+    width: 2px;
+  }
+
+  .game-layout > .panel-area > .player-panel {
+    padding: 0;
+    height: 0;
+    width: 100%;
+  }
+}
