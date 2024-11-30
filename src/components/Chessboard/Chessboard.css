@@ -1,9 +1,9 @@
 #chessboard {
   display: grid;
-  grid-template-columns: repeat(14, 50px);
-  grid-template-rows: repeat(14, 50px);
-  width: 700px;
-  height: 700px;
+  grid-template-columns: repeat(14, var(--tile-size));
+  grid-template-rows: repeat(14, var(--tile-size));
+  width: calc(var(--tile-size) * 14);
+  height: calc(var(--tile-size) * 14);
   background-color: black;
 }
 

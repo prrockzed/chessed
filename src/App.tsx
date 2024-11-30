@@ -1,4 +1,5 @@
 import './App.css'
+import './mediaQueries.css'
 import Arbiter from './components/Arbiter/Arbiter'
 
 // The app component

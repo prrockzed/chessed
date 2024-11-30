@@ -1,5 +1,5 @@
 import './Chessboard.css'
-import PlayerName from '../PlayerName/PlayerName'
+// import PlayerName from '../PlayerName/PlayerName'
 import { Piece, Position } from '../../models'
 import Tile from '../Tile/Tile'
 import { useRef, useState } from 'react'
@@ -205,7 +205,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
         ref={chessboardRef}
       >
         {board}
-        <PlayerName whoseTurn={whoseTurn} />
+        {/* <PlayerName whoseTurn={whoseTurn} /> */}
       </div>
     </>
   )
