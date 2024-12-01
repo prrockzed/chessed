@@ -17,8 +17,12 @@
   background-size: var(--chess-piece-size);
 }
 
-.tile .chess-piece:hover {
+.tile .chess-piece.cursor-grab:hover {
   cursor: grab;
+}
+
+.tile .chess-piece.cursor-pointer:hover {
+  cursor: pointer;
 }
 
 .tile .chess-piece:active {

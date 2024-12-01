@@ -4,11 +4,15 @@ import { TeamType } from "../../Types";
 interface ChessContextProps {
   currentPlayer: TeamType;
   setCurrentPlayerByWhoseTurn: (whoseTurn: number) => void;
+  interactionMode: "drag" | "select";
+  setInteractionMode: (interactionMode: "drag" | "select") => void;
 }
 
 export const ChessContext = createContext<ChessContextProps>({
   currentPlayer: TeamType.RED,
   setCurrentPlayerByWhoseTurn: (whoseTurn) => {},
+  interactionMode: "drag",
+  setInteractionMode: (interactionMode) => {},
 });
 
 export function ChessProvider({ whoseTurn, children }: { whoseTurn: number, children: React.ReactNode }) {
@@ -31,6 +35,9 @@ export function ChessProvider({ whoseTurn, children }: { whoseTurn: number, chil
   const [currentPlayer, setCurrentPlayer] = useState<TeamType>(
     getCurrentPlayerByWhoseTurn(whoseTurn)
   );
+  const [interactionMode, setInteractionMode] = useState<"drag" | "select">(
+    "drag"
+  );
 
   const setCurrentPlayerByWhoseTurn = (whoseTurn: number) => {
     setCurrentPlayer(getCurrentPlayerByWhoseTurn(whoseTurn));
@@ -45,6 +52,8 @@ export function ChessProvider({ whoseTurn, children }: { whoseTurn: number, chil
       value={{
         currentPlayer,
         setCurrentPlayerByWhoseTurn,
+        interactionMode,
+        setInteractionMode,
       }}
     >
       {children}

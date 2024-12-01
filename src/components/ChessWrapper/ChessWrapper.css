@@ -11,11 +11,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  padding: 4px;
 }
 
-.middle-panels {
+.middle-panels > .player-panel {
   writing-mode: vertical-rl;
+  height: 50%;
+  width: .5vw;
+}
+
+.game-layout > .panel-area > .player-panel {
+  height: .5vw;
+  width: 50%;
 }
 
 div#left-panel {
@@ -25,11 +32,43 @@ div#left-panel {
 .player-panel {
   padding: 10px 15px;
   border: 2px solid transparent;
-  border-radius: 20px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.middle-panel > .chessboard-container {
-  position: relative;
+.game-display {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: fit-content;
+  margin: 0 auto;
+  padding: .2vh 3vw;
+  gap: 10px;
+  border: 2px solid whitesmoke;
+  height: var(--tile-size);
+  border-radius: var(--tile-size);
+  margin-bottom: 10px;
+}
+
+.game-display > .currentPlayerDisplay {
+  color: whitesmoke;
+  padding: 2px 10px;
+  border-radius: calc(1rem + 2px);
+}
+
+.game-display > .interactionModeToggleDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-display > .interactionModeToggleDiv > .interactionModeToggleBtn {
+  padding: 5px;
+  border-radius: calc(1rem + 5px);
+  width: 5vw;
+  min-width: fit-content;
 }
 
 @media all and (max-width: 768px) {
