@@ -1,7 +1,7 @@
 import "./ChessWrapper.css";
 import { useChessContext } from "../context/ChessContext";
-import { useState } from "react";
 
+/** Wrapper component for the chess board, holds player panels surrounding the board */
 export default function ChessWrapper({
   children,
 }: {
@@ -75,6 +75,7 @@ interface PlayerPanelProps {
   isActive: boolean;
 }
 
+/** Player panel component, holds player name and indicates active player */
 function PlayerPanel({ name, color, isActive }: PlayerPanelProps) {
   return (
     <div

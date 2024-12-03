@@ -13,7 +13,9 @@ interface Props {
 }
 
 export default function Chessboard({ playMove, pieces }: Props) {
+  /** Gets the grid size based on the window size dynamically */
   const getGridSize = () => {
+    // basically imitates the same logic as in the css file
     const vw = window.innerWidth * 0.9;
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
@@ -28,7 +30,6 @@ export default function Chessboard({ playMove, pieces }: Props) {
   // piece interaction and tracking
   const [currentPiece, setCurrentPiece] = useState<Piece | null>(null);
   const [activePieceElement, setActivePieceElement] = useState<HTMLElement | null>(null);
-  const [possibleMoves, setPossibleMoves] = useState<Position[]>([]);
 
   // board related states
   const chessboardRef = useRef<HTMLDivElement>(null)
@@ -49,18 +50,18 @@ export default function Chessboard({ playMove, pieces }: Props) {
     topRegionBottom: 0,
     bottomRegionTop: 0,
     bottom: 0,
-  })
+  }); // ref object to store boundaries of the chessboard
 
   // player turn related states
-  // playerIdle: player is not moving a piece, playerMovingPiece: player is moving a piece
   const [playerState, setPlayerState] = useState<'playerIdle' | 'playerMovingPiece'>('playerIdle');
 
   // logDebug function for debugging
-  const logDebug = (message: string, data?: any) => {
+  /* const logDebug = (message: string, data?: any) => {
     console.log(`🐞 Chessboard Debug: ${message}`, data || '')
-  }
+  } */
 
   useEffect(() => {
+    // calculates the boundaries of the chessboard only when the chessboard is resized
     if (chessboardRef.current && boardMetrics) {
       const { top, left, height, width } = boardMetrics;
       const sidePortionWidth =  3 * GRID_SIZE;
@@ -79,6 +80,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
   }, [boardMetrics, GRID_SIZE]);
 
   useEffect(() => {
+    // updates the offset of the chessboard when the window is resized
     const updateOffset = () => {
       if(chessboardRef.current) {
         const rect = chessboardRef.current.getBoundingClientRect();
@@ -98,6 +100,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
   }, [])
 
   useEffect(() => {
+    // changes the cursor style of the pieces based on the interaction mode
     const cursorClass = interactionMode === 'drag' ? 'cursor-grab' : 'cursor-pointer';
     const pieces = Array.from(document.getElementsByClassName('chess-piece'));
 
@@ -107,6 +110,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
     });
   }, [interactionMode])
 
+  /** Calculates the grid position of a piece based on the clientX and clientY */
   function calculateGridPosition(clientX: number, clientY: number) {
     return {
       x: Math.floor((clientX - boardMetrics.left) / GRID_SIZE),
@@ -114,42 +118,23 @@ export default function Chessboard({ playMove, pieces }: Props) {
     }
   }
 
-  function snapToGrid() {
-    if (chessboardRef.current && activePieceElement) {
-      const element = activePieceElement;
-      const gridX = Math.round((parseFloat(element.style.left) - boardMetrics.left) / GRID_SIZE)
-      const gridY = Math.round((parseFloat(element.style.top) - boardMetrics.top) / GRID_SIZE)
-
-      element.style.left = `${boardMetrics.left + gridX * GRID_SIZE}px`
-      element.style.top = `${boardMetrics.top + gridY * GRID_SIZE}px`
-    }
-  }
-
-  function extractPossibleMovesToState() {
-    if (currentPiece && currentPiece.possibleMoves) {
-      setPossibleMoves(currentPiece.possibleMoves)
-    }
-    else {
-      setPossibleMoves([])
-    }
-  }
-
+  /** loads the grabbed/selected piece Object into the state */
   function getCurrentPieceSetToState(grabX: number, grabY: number) {
     const curPiece = pieces.find((p) => p.samePosition(new Position(grabX, grabY)));
     curPiece ? setCurrentPiece(curPiece) : setCurrentPiece(null);
   }
 
-  // Function when player grabs a  piece
+  /** Handles chess piece grabbing event */
   function grabPiece(e: React.MouseEvent) {
     if(interactionMode === 'select') return;
 
-    // Grabbing the pieces off the chessboard
     const chessboard = chessboardRef.current;
     const element = e.target as HTMLElement;
     
     if (element.classList.contains('chess-piece') && chessboard) {
       const { x: grabX, y: grabY } = calculateGridPosition(e.clientX, e.clientY)
       
+      // center adjustment
       const x = e.clientX - GRID_SIZE / 2
       const y = e.clientY - GRID_SIZE / 2
       
@@ -160,12 +145,11 @@ export default function Chessboard({ playMove, pieces }: Props) {
       
       getCurrentPieceSetToState(grabX, grabY);
       setActivePieceElement(element);
-      extractPossibleMovesToState();
       setPlayerState('playerMovingPiece');
     }
   }
 
-  // Function when player clicks a piece
+  /** Handles chess piece click/select event */
   function clickPiece(e: React.MouseEvent) {
     if(interactionMode === 'drag') return;
 
@@ -174,26 +158,14 @@ export default function Chessboard({ playMove, pieces }: Props) {
 
     if (element.classList.contains('chess-piece') && chessboard) {
       const { x: grabX, y: grabY } = calculateGridPosition(e.clientX, e.clientY)
-
-      const oldPiece = currentPiece;
       getCurrentPieceSetToState(grabX, grabY);
-      /* if (currentPiece && oldPiece === currentPiece) {
-        // Deselect the piece if clicked again
-        setPossibleMoves([]);
-        setCurrentPiece(null);
-        setActivePieceElement(null);
-        setPlayerState('playerIdle');
-        return;
-      } */
-
       setActivePieceElement(element);
-      extractPossibleMovesToState();
       setPlayerState('playerMovingPiece');
     }
   }
 
 
-  // Function when player tries to move a piece
+  /** Handles chess piece move event */
   function movePiece(e: React.MouseEvent) {
     if(interactionMode === 'select') return;
     const chessboard = chessboardRef.current;
@@ -216,6 +188,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
       const x = e.clientX - GRID_SIZE / 2;
       const y = e.clientY - GRID_SIZE / 2;
 
+      // topPortion, centralRegion = centralSquare+leftPortion+rightPortion, bottomPortion
       const isInsideValidRegion = !!(
         ((x > centralRegionLeft && x < centralRegionRight) && (y > centralRegionTop && y < centralRegionBottom)) || 
         ((x > topBottomRegionLeft && x < topBottomRegionRight) && (
@@ -235,7 +208,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
     }
   }
 
-  // Function when player drops a piece
+  /** handles piece drop event */
   function dropPiece(e: React.MouseEvent) {
     if(interactionMode === 'select') return;
     const chessboard = chessboardRef.current
@@ -253,17 +226,15 @@ export default function Chessboard({ playMove, pieces }: Props) {
           activePieceElement.style.removeProperty('top')
           activePieceElement.style.removeProperty('left')
           activePieceElement.style.removeProperty('z-index');
-        } else {
-          snapToGrid();
         }
       }
 
       setPlayerState('playerIdle');
-      setPossibleMoves([])
       setActivePieceElement(null)
     }
   }
 
+  /** handles piece target selection event, applicable only in interactionMode: 'select' */
   function dropPieceSelectMode(e: React.MouseEvent) {
     if(interactionMode === 'drag' || playerState !== 'playerMovingPiece') return;
     const chessboard = chessboardRef.current
@@ -276,11 +247,8 @@ export default function Chessboard({ playMove, pieces }: Props) {
         activePieceElement.style.removeProperty('top')
         activePieceElement.style.removeProperty('left')
         activePieceElement.style.removeProperty('z-index');
-      } else {
-        snapToGrid();
       }
       setPlayerState('playerIdle');
-      setPossibleMoves([])
       setActivePieceElement(null);
     }
   }

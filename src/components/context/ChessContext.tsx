@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { TeamType } from "../../Types";
 
 interface ChessContextProps {
@@ -15,6 +15,7 @@ export const ChessContext = createContext<ChessContextProps>({
   setInteractionMode: (interactionMode) => {},
 });
 
+/** Provider component for the chess context, provides currentPlayer, interactionMode */
 export function ChessProvider({ whoseTurn, children }: { whoseTurn: number, children: React.ReactNode }) {
   const getCurrentPlayerByWhoseTurn = (whoseTurn: number): TeamType => {
     const playerID: number = whoseTurn % 4;
@@ -39,13 +40,15 @@ export function ChessProvider({ whoseTurn, children }: { whoseTurn: number, chil
     "drag"
   );
 
-  const setCurrentPlayerByWhoseTurn = (whoseTurn: number) => {
+  /** memoized function to set the current player by whose turn as input */
+  // fixes the function behavior, function doesnt change on re-render, only changes when input differs
+  const setCurrentPlayerByWhoseTurn = useCallback((whoseTurn: number) => {
     setCurrentPlayer(getCurrentPlayerByWhoseTurn(whoseTurn));
-  };
+  }, []);  
 
   useEffect(() => {
     setCurrentPlayerByWhoseTurn(whoseTurn)
-  }, [whoseTurn]);
+  }, [whoseTurn, setCurrentPlayerByWhoseTurn]);
 
   return (
     <ChessContext.Provider
@@ -61,6 +64,7 @@ export function ChessProvider({ whoseTurn, children }: { whoseTurn: number, chil
   );
 }
 
+/** custom chess context hook, provides easy access to the chess context */
 export function useChessContext() {
   return useContext(ChessContext);
 }

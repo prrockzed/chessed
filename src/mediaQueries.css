@@ -1,4 +1,4 @@
-@media all and (min-width: 768px) {
+@media all and (min-width: 700px) {
   /* tablet landscape and desktop styles here */
   :root {
     --tile-size: 2.5rem;
