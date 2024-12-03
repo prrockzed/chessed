@@ -50,7 +50,7 @@
 }
 
 .tile-highlight.chess-piece-tile::before {
-  position: absolute;
+  position: fixed;
   content: ' ';
   width: var(--tile-highlight-chess-piece-size);
   height: var(--tile-highlight-chess-piece-size);

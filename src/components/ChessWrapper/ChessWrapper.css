@@ -83,13 +83,11 @@ div#left-panel {
   
   .middle-panels > .player-panel {
     padding: 0;
-    height: 100%;
     width: 2px;
   }
 
   .game-layout > .panel-area > .player-panel {
     padding: 0;
     height: 0;
-    width: 100%;
   }
 }

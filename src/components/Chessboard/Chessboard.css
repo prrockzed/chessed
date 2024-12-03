@@ -8,11 +8,16 @@
 }
 
 .modal {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100dvw;
+  height: 100dvh;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 20;
 }
 
 .modal.hidden {
@@ -20,20 +25,18 @@
 }
 
 .modal > .modal-body {
-  position: absolute;
-  top: calc(50% - 75px);
-  left: calc(50% - 350px);
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: 150px;
-  width: 700px;
+  gap: 10px;
+  height: 20vh;
+  width: calc(var(--tile-size) * 14);
   background-color: rgba(0, 0, 0, 0.75);
 }
 
 .modal > .modal-body > img {
-  height: 90px;
-  padding: 20px;
+  width: 100%;
+  padding: 10px;
   border-radius: 50%;
 }
 
@@ -45,11 +48,13 @@
 .modal > .modal-body > .checkmate-body {
   display: flex;
   flex-direction: column;
+  padding: 10px;
   gap: 24px;
 }
 
 .modal > .modal-body > .checkmate-body > span {
-  font-size: 28px;
+  font-size: 1.5rem;
+  text-align: center;
   color: white;
 }
 
