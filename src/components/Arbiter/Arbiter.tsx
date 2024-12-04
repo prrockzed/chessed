@@ -4,8 +4,6 @@ import { initialBoard } from '../../Constants'
 import { PieceType, TeamType } from '../../Types'
 import { Piece, Position } from '../../models'
 import { useRef, useState } from 'react'
-import { ChessProvider } from '../context/ChessContext'
-import ChessWrapper from '../ChessWrapper/ChessWrapper'
 //import {
 //  bishopMove,
 //  kingMove,
@@ -257,14 +255,11 @@ export default function Arbiter() {
         </div>
       </div>
 
-      <ChessProvider whoseTurn={board.totalTurns}>
-        <ChessWrapper>
-          <Chessboard
-            playMove={playMove}
-            pieces={board.pieces}
-          />
-        </ChessWrapper>
-      </ChessProvider>
+      <Chessboard
+        playMove={playMove}
+        pieces={board.pieces}
+        whoseTurn={board.totalTurns}
+      />
     </>
   )
 }
