@@ -1,255 +1,157 @@
 import './Chessboard.css'
-// import PlayerName from '../PlayerName/PlayerName'
+import PlayerName from '../PlayerName/PlayerName'
 import { Piece, Position } from '../../models'
 import Tile from '../Tile/Tile'
-import { useEffect, useRef, useState } from 'react'
-import { VERTICAL_AXIS, HORIZONTAL_AXIS } from '../../Constants'
-import { useChessContext } from '../context/ChessContext'
+import { useRef, useState } from 'react'
+import { VERTICAL_AXIS, HORIZONTAL_AXIS, GRID_SIZE } from '../../Constants'
 
 // Interface deciding the types
 interface Props {
   playMove: (piece: Piece, position: Position) => boolean
   pieces: Piece[]
+  whoseTurn: number
 }
 
-export default function Chessboard({ playMove, pieces }: Props) {
-  /** Gets the grid size based on the window size dynamically */
-  const getGridSize = () => {
-    // basically imitates the same logic as in the css file
-    const vw = window.innerWidth * 0.9;
-    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-    if (window.innerWidth > 768) {
-      return 2.5 * rem;
-    } else {
-      return vw / 14;
-    }
-  }
-  const GRID_SIZE = getGridSize();
-  
-  // piece interaction and tracking
-  const [currentPiece, setCurrentPiece] = useState<Piece | null>(null);
-  const [activePieceElement, setActivePieceElement] = useState<HTMLElement | null>(null);
-
-  // board related states
+export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
+  // Declaring Constants
+  const [activePiece, setActivePiece] = useState<HTMLElement | null>(null)
+  const [grabPosition, setGrabPosition] = useState<Position>(
+    new Position(-1, -1)
+  )
+  const [isClicked, setIsClicked] = useState<boolean>(false)
   const chessboardRef = useRef<HTMLDivElement>(null)
-  const [boardMetrics, setBoardMetrics] = useState<{
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-  }>({ top: 0, left: 0, width: 0, height: 0 });
-  const { interactionMode } = useChessContext();
-  const boundaries = useRef({
-    centralRegionLeft: 0,
-    topBottomRegionLeft: 0,
-    centralRegionRight: 0,
-    topBottomRegionRight: 0,
-    centralRegionTop: 0,
-    centralRegionBottom: 0,
-    topRegionBottom: 0,
-    bottomRegionTop: 0,
-    bottom: 0,
-  }); // ref object to store boundaries of the chessboard
 
-  // player turn related states
-  const [playerState, setPlayerState] = useState<'playerIdle' | 'playerMovingPiece'>('playerIdle');
-
-  // logDebug function for debugging
-  /* const logDebug = (message: string, data?: any) => {
-    console.log(`🐞 Chessboard Debug: ${message}`, data || '')
-  } */
-
-  useEffect(() => {
-    // calculates the boundaries of the chessboard only when the chessboard is resized
-    if (chessboardRef.current && boardMetrics) {
-      const { top, left, height, width } = boardMetrics;
-      const sidePortionWidth =  3 * GRID_SIZE;
-      boundaries.current = {
-        centralRegionLeft: left,
-        topBottomRegionLeft: left + sidePortionWidth,
-        centralRegionRight: left + width,
-        topBottomRegionRight: left + width - sidePortionWidth,
-        centralRegionTop: top + sidePortionWidth,
-        centralRegionBottom: top + height - sidePortionWidth,
-        topRegionBottom: top + sidePortionWidth,
-        bottomRegionTop: top + height - sidePortionWidth,
-        bottom: top + height,
-      };
-    }
-  }, [boardMetrics, GRID_SIZE]);
-
-  useEffect(() => {
-    // updates the offset of the chessboard when the window is resized
-    const updateOffset = () => {
-      if(chessboardRef.current) {
-        const rect = chessboardRef.current.getBoundingClientRect();
-        setBoardMetrics({
-          top: rect.top,
-          left: rect.left,
-          width: rect.width,
-          height: rect.height
-        })
-      }
-    }
-
-    updateOffset();
-    window.addEventListener('resize', updateOffset);
-
-    return () => window.removeEventListener('resize', updateOffset);
-  }, [])
-
-  useEffect(() => {
-    // changes the cursor style of the pieces based on the interaction mode
-    const cursorClass = interactionMode === 'drag' ? 'cursor-grab' : 'cursor-pointer';
-    const pieces = Array.from(document.getElementsByClassName('chess-piece'));
-
-    pieces.forEach((piece) => {
-      piece.classList.remove('cursor-grab', 'cursor-pointer');
-      piece.classList.add(cursorClass);
-    });
-  }, [interactionMode])
-
-  /** Calculates the grid position of a piece based on the clientX and clientY */
-  function calculateGridPosition(clientX: number, clientY: number) {
-    return {
-      x: Math.floor((clientX - boardMetrics.left) / GRID_SIZE),
-      y: Math.floor((boardMetrics.height - (clientY - boardMetrics.top)) / GRID_SIZE)
-    }
-  }
-
-  /** loads the grabbed/selected piece Object into the state */
-  function getCurrentPieceSetToState(grabX: number, grabY: number) {
-    const curPiece = pieces.find((p) => p.samePosition(new Position(grabX, grabY)));
-    curPiece ? setCurrentPiece(curPiece) : setCurrentPiece(null);
-  }
-
-  /** Handles chess piece grabbing event */
+  // Function when player grabs a  piece
   function grabPiece(e: React.MouseEvent) {
-    if(interactionMode === 'select') return;
-
-    const chessboard = chessboardRef.current;
-    const element = e.target as HTMLElement;
-    
-    if (element.classList.contains('chess-piece') && chessboard) {
-      const { x: grabX, y: grabY } = calculateGridPosition(e.clientX, e.clientY)
-      
-      // center adjustment
-      const x = e.clientX - GRID_SIZE / 2
-      const y = e.clientY - GRID_SIZE / 2
-      
-      element.style.position = 'fixed'
-      element.style.left = `${x}px`
-      element.style.top = `${y}px`
-      element.style.zIndex = '100';
-      
-      getCurrentPieceSetToState(grabX, grabY);
-      setActivePieceElement(element);
-      setPlayerState('playerMovingPiece');
-    }
-  }
-
-  /** Handles chess piece click/select event */
-  function clickPiece(e: React.MouseEvent) {
-    if(interactionMode === 'drag') return;
-
+    // Grabbing the pieces off the chessboard
     const chessboard = chessboardRef.current
     const element = e.target as HTMLElement
 
     if (element.classList.contains('chess-piece') && chessboard) {
-      const { x: grabX, y: grabY } = calculateGridPosition(e.clientX, e.clientY)
-      getCurrentPieceSetToState(grabX, grabY);
-      setActivePieceElement(element);
-      setPlayerState('playerMovingPiece');
+      const grabX = Math.floor((e.clientX - chessboard.offsetLeft) / GRID_SIZE)
+      const grabY = Math.abs(
+        Math.abs(
+          Math.ceil((e.clientY - chessboard.offsetTop - 700) / GRID_SIZE)
+        )
+      )
+
+      setGrabPosition(new Position(grabX, grabY))
+
+      const x = e.clientX - GRID_SIZE / 2
+      const y = e.clientY - GRID_SIZE / 2
+
+      element.style.position = 'absolute'
+      element.style.left = `${x}px`
+      element.style.top = `${y}px`
+
+      setActivePiece(element)
+      setIsClicked(false)
+    }
+  }
+
+  // Function when player clicks a piece
+  function clickPiece(e: React.MouseEvent) {
+    const chessboard = chessboardRef.current
+    const element = e.target as HTMLElement
+
+    if (element.classList.contains('chess-piece') && chessboard) {
+      const grabX = Math.floor((e.clientX - chessboard.offsetLeft) / GRID_SIZE)
+      const grabY = Math.abs(
+        Math.abs(
+          Math.ceil((e.clientY - chessboard.offsetTop - 700) / GRID_SIZE)
+        )
+      )
+
+      setGrabPosition(new Position(grabX, grabY))
+      setActivePiece(element)
+      setIsClicked(true)
     }
   }
 
 
-  /** Handles chess piece move event */
+  // Function when player tries to move a piece
   function movePiece(e: React.MouseEvent) {
-    if(interactionMode === 'select') return;
-    const chessboard = chessboardRef.current;
+    const chessboard = chessboardRef.current
 
-    if (activePieceElement && chessboard) {
-      const { top } = boardMetrics;
-      const { 
-        centralRegionLeft, 
-        topBottomRegionLeft, 
-        centralRegionRight, 
-        topBottomRegionRight, 
-        centralRegionTop, 
-        centralRegionBottom, 
-        topRegionBottom, 
-        bottomRegionTop, 
-        bottom 
-      } = boundaries.current;
+    if (activePiece && chessboard) {
+      // Declaring constants for restricting the pieces
+      const leftX = chessboard.offsetLeft - 4
+      const midleftX =
+        chessboard.offsetLeft + (chessboard.clientWidth / 14) * 3 - 4
+      const topY = chessboard.offsetTop - 4
+      const midtopY =
+        chessboard.offsetTop + (chessboard.clientHeight / 14) * 3 - 4
+      const rightX = chessboard.offsetLeft + chessboard.clientWidth - 46
+      const midrightX =
+        chessboard.offsetLeft -
+        (chessboard.clientWidth / 14) * 3 +
+        chessboard.clientWidth -
+        46
+      const bottomY = chessboard.offsetTop + chessboard.clientHeight - 46
+      const midbottomY =
+        chessboard.offsetTop -
+        (chessboard.clientHeight / 14) * 3 +
+        chessboard.clientHeight -
+        46
+      const x = e.clientX - GRID_SIZE / 2
+      const y = e.clientY - GRID_SIZE / 2
+      activePiece.style.position = 'absolute'
 
-      // adjusting peice position to center
-      const x = e.clientX - GRID_SIZE / 2;
-      const y = e.clientY - GRID_SIZE / 2;
-
-      // topPortion, centralRegion = centralSquare+leftPortion+rightPortion, bottomPortion
-      const isInsideValidRegion = !!(
-        ((x > centralRegionLeft && x < centralRegionRight) && (y > centralRegionTop && y < centralRegionBottom)) || 
-        ((x > topBottomRegionLeft && x < topBottomRegionRight) && (
-          (y > top && y < topRegionBottom) ||
-          (y > bottomRegionTop && y < bottom)
-        ))
-      );
-
-      if(isInsideValidRegion) {
-        activePieceElement.style.position = 'fixed'
-        activePieceElement.style.left = `${x}px`
-        activePieceElement.style.top = `${y}px`
-        activePieceElement.style.visibility = 'visible';
+      // Restricting the x position
+      if (x < leftX) {
+        activePiece.style.left = `${leftX}px`
+      } else if (x > rightX) {
+        activePiece.style.left = `${rightX}px`
       } else {
-        activePieceElement.style.visibility = 'hidden';
+        activePiece.style.left = `${x}px`
+      }
+
+      // Restricting the y position
+      if (y < topY) {
+        activePiece.style.top = `${topY}px`
+      } else if (y > bottomY) {
+        activePiece.style.top = `${bottomY}px`
+      } else {
+        activePiece.style.top = `${y}px`
+      }
+
+      // Restricting the cutout portions
+      if ((x < midleftX && y > midbottomY) || (x < midleftX && y < midtopY)) {
+        activePiece.style.left = `${midleftX}px`
+      } else if (
+        (x > midrightX && y > midbottomY) ||
+        (x > midrightX && y < midtopY)
+      ) {
+        activePiece.style.left = `${midrightX}px`
       }
     }
   }
 
-  /** handles piece drop event */
+  // Function when player drops a piece
   function dropPiece(e: React.MouseEvent) {
-    if(interactionMode === 'select') return;
     const chessboard = chessboardRef.current
 
     // Dropping the pieces on the right grid
-    if (activePieceElement && chessboard) {
-      const { x: placeX, y: placeY } = calculateGridPosition(e.clientX, e.clientY);
+    if (activePiece && chessboard) {
+      const x = Math.floor((e.clientX - chessboard.offsetLeft) / GRID_SIZE)
+      const y = Math.abs(
+        Math.ceil((e.clientY - chessboard.offsetTop - 700) / GRID_SIZE)
+      )
+
+      const currentPiece = pieces.find((p) => p.samePosition(grabPosition))
 
       if (currentPiece) {
-        var success = playMove(currentPiece.clone(), new Position(placeX, placeY))
+        var success = playMove(currentPiece.clone(), new Position(x, y))
 
         if (!success) {
           // Resets the piece position
-          activePieceElement.style.position = 'relative'
-          activePieceElement.style.removeProperty('top')
-          activePieceElement.style.removeProperty('left')
-          activePieceElement.style.removeProperty('z-index');
+          activePiece.style.position = 'relative'
+          activePiece.style.removeProperty('top')
+          activePiece.style.removeProperty('left')
         }
       }
 
-      setPlayerState('playerIdle');
-      setActivePieceElement(null)
-    }
-  }
-
-  /** handles piece target selection event, applicable only in interactionMode: 'select' */
-  function dropPieceSelectMode(e: React.MouseEvent) {
-    if(interactionMode === 'drag' || playerState !== 'playerMovingPiece') return;
-    const chessboard = chessboardRef.current
-    if (activePieceElement && chessboard && currentPiece && playerState === 'playerMovingPiece') {
-      const { x: placeX, y: placeY } = calculateGridPosition(e.clientX, e.clientY);
-      var success = playMove(currentPiece.clone(), new Position(placeX, placeY))
-      if (!success) {
-        // Resets the piece position
-        activePieceElement.style.position = 'relative'
-        activePieceElement.style.removeProperty('top')
-        activePieceElement.style.removeProperty('left')
-        activePieceElement.style.removeProperty('z-index');
-      }
-      setPlayerState('playerIdle');
-      setActivePieceElement(null);
+      setActivePiece(null)
     }
   }
 
@@ -263,14 +165,17 @@ export default function Chessboard({ playMove, pieces }: Props) {
       const piece = pieces.find((p) => p.samePosition(new Position(i, j)))
       let image = piece ? piece.image : undefined
 
-      // For highlighting all the possible moves
-      let highlight = false;
-      // Check if player is in the 'playerMovingPiece' state
-      if (playerState === 'playerMovingPiece' && currentPiece?.possibleMoves) {
-        highlight = currentPiece.possibleMoves.some((p) =>
-          p.samePosition(new Position(i, j))
-        );
-      }
+      let currentPiece =
+        activePiece != null
+          ? pieces.find((p) => p.samePosition(grabPosition))
+          : undefined
+
+      // For highlighting the attacked pieces
+      let highlight = currentPiece?.possibleMoves
+        ? currentPiece.possibleMoves.some((p) =>
+            p.samePosition(new Position(i, j))
+          )
+        : false
 
       // Made chessboard with all the 'useful' squares
       board.push(
@@ -280,7 +185,6 @@ export default function Chessboard({ playMove, pieces }: Props) {
           num_j={num_j}
           image={image}
           highlight={highlight}
-          interactionMode={interactionMode}
         />
       )
     }
@@ -290,17 +194,18 @@ export default function Chessboard({ playMove, pieces }: Props) {
     <>
       <div
         onMouseMove={(e) => {
-          if (interactionMode === 'drag') {
+          if (!isClicked) {
             movePiece(e)
-          }
+          }   
         }}
         onMouseDown={(e) => grabPiece(e)}
         onClick={(e) => clickPiece(e)}
-        onMouseUp={(e) => {interactionMode === 'select' ? dropPieceSelectMode(e) : dropPiece(e)}}
+        onMouseUp={(e) => dropPiece(e)}
         id='chessboard'
         ref={chessboardRef}
       >
         {board}
+        <PlayerName whoseTurn={whoseTurn} />
       </div>
     </>
   )

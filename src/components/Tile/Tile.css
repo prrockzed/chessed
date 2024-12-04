@@ -1,28 +1,24 @@
 .tile {
   display: grid;
   place-content: center;
-  width: var(--tile-size);
-  height: var(--tile-size);
+  width: 50px;
+  height: 50px;
 }
 
 .tile img {
-  width: var(--tile-size);
+  width: 50px;
 }
 
 .tile .chess-piece {
-  width: var(--chess-piece-size);
-  height: var(--chess-piece-size);
+  width: 43px;
+  height: 43px;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: var(--chess-piece-size);
+  background-size: 43px;
 }
 
-.tile .chess-piece.cursor-grab:hover {
+.tile .chess-piece:hover {
   cursor: grab;
-}
-
-.tile .chess-piece.cursor-pointer:hover {
-  cursor: pointer;
 }
 
 .tile .chess-piece:active {
@@ -43,17 +39,17 @@
 
 .tile-highlight:not(.chess-piece-tile)::before {
   content: ' ';
-  width: var(--tile-highlight-size);
-  height: var(--tile-highlight-size);
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background-color: rgba(0, 0, 0, 0.4);
 }
 
 .tile-highlight.chess-piece-tile::before {
-  position: fixed;
+  position: absolute;
   content: ' ';
-  width: var(--tile-highlight-chess-piece-size);
-  height: var(--tile-highlight-chess-piece-size);
+  width: 45px;
+  height: 45px;
   border: 2.5px solid rgba(0, 0, 0);
   border-radius: 50%;
 }
