@@ -6,9 +6,10 @@ interface Props {
   num_i: number
   num_j: number
   highlight: boolean
+  interactionMode: 'drag' | 'select'
 }
 
-export default function Tile({ num_i, num_j, image, highlight }: Props) {
+export default function Tile({ num_i, num_j, image, highlight, interactionMode }: Props) {
   const className: string = [
     'tile',
     (num_i + num_j) % 2 === 0 && 'dark-tile', // Dark Tiles

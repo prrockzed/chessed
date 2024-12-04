@@ -1,3 +1,13 @@
+:root {
+  /* strictly global css variables only */
+  --tile-size: 3rem;
+
+  /* size */
+  --chess-piece-size: calc(var(--tile-size) * 0.85);
+  --tile-highlight-size: calc(var(--tile-size) * 0.25);
+  --tile-highlight-chess-piece-size: calc(var(--tile-size) * 0.9);
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
