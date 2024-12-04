@@ -8,7 +8,6 @@ export default function ChessWrapper({
   children: React.ReactNode;
 }) {
   const { currentPlayer } = useChessContext();
-  const {interactionMode, setInteractionMode} = useChessContext();
 
   const players = [
     { name: "Red Player", color: "red", id: "r" },
@@ -24,12 +23,6 @@ export default function ChessWrapper({
       <div className="game-display">
         <div className="currentPlayerDisplay" style={{backgroundColor: displayBgColor}}>
           {players.find((p) => p.id === currentPlayer)?.name}
-        </div>
-        <div className="interactionModeToggleDiv">
-          <button
-            className="interactionModeToggleBtn"
-            onClick={() => setInteractionMode(interactionMode === "drag" ? "select" : "drag")}
-          >{interactionMode === "drag" ? "Select" : "Drag"}</button>
         </div>
       </div>
       <div className="game-layout">

@@ -4,15 +4,11 @@ import { TeamType } from "../../Types";
 interface ChessContextProps {
   currentPlayer: TeamType;
   setCurrentPlayerByWhoseTurn: (whoseTurn: number) => void;
-  interactionMode: "drag" | "select";
-  setInteractionMode: (interactionMode: "drag" | "select") => void;
 }
 
 export const ChessContext = createContext<ChessContextProps>({
   currentPlayer: TeamType.RED,
   setCurrentPlayerByWhoseTurn: (whoseTurn) => {},
-  interactionMode: "drag",
-  setInteractionMode: (interactionMode) => {},
 });
 
 /** Provider component for the chess context, provides currentPlayer, interactionMode */
@@ -36,9 +32,6 @@ export function ChessProvider({ whoseTurn, children }: { whoseTurn: number, chil
   const [currentPlayer, setCurrentPlayer] = useState<TeamType>(
     getCurrentPlayerByWhoseTurn(whoseTurn)
   );
-  const [interactionMode, setInteractionMode] = useState<"drag" | "select">(
-    "drag"
-  );
 
   /** memoized function to set the current player by whose turn as input */
   // fixes the function behavior, function doesnt change on re-render, only changes when input differs
@@ -55,8 +48,6 @@ export function ChessProvider({ whoseTurn, children }: { whoseTurn: number, chil
       value={{
         currentPlayer,
         setCurrentPlayerByWhoseTurn,
-        interactionMode,
-        setInteractionMode,
       }}
     >
       {children}

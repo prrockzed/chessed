@@ -5,9 +5,9 @@
   }
 }
 
-@media all and (max-width: 768px) {
+@media all and (max-width: 700px) {
   /* phone styles here */
   :root {
-    --tile-size: calc(90vw / 14);
+    --tile-size: calc(80vw / 14);
   }
 }

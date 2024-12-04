@@ -1,27 +1,28 @@
 .game-layout {
   display: flex;
   flex-direction: column;
+  padding: 20px;
 }
 
 .game-layout > .middle-panel {
   display: flex;
 }
 
-.game-layout > .panel-area, .game-layout > .middle-panel > .panel-area {
+.game-layout > .panel-area,
+.game-layout > .middle-panel > .panel-area {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
 }
 
 .middle-panels > .player-panel {
   writing-mode: vertical-rl;
   height: calc(var(--tile-size) * 8);
-  width: .5vw;
+  width: 0.5vw;
 }
 
 .game-layout > .panel-area > .player-panel {
-  height: .5vw;
+  height: 0.5vw;
   width: calc(var(--tile-size) * 8);
 }
 
@@ -30,7 +31,7 @@ div#left-panel {
 }
 
 .player-panel {
-  padding: 10px 15px;
+  padding: 12px;
   border: 2px solid transparent;
   border-radius: 10px;
   display: flex;
@@ -39,55 +40,40 @@ div#left-panel {
 }
 
 .game-display {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: fit-content;
-  margin: 0 auto;
-  padding: .2vh 3vw;
-  gap: 10px;
-  border: 2px solid whitesmoke;
-  height: var(--tile-size);
-  border-radius: var(--tile-size);
-  margin-bottom: 10px;
+  display: none;
 }
 
-.game-display > .currentPlayerDisplay {
-  color: whitesmoke;
-  padding: 2px 10px;
-  border-radius: calc(1rem + 2px);
-}
-
-.game-display > .interactionModeToggleDiv {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.game-display > .interactionModeToggleDiv > .interactionModeToggleBtn {
-  padding: 5px;
-  border-radius: calc(1rem + 5px);
-  width: 5vw;
-  min-width: fit-content;
-}
-
-@media all and (max-width: 768px) {
+@media all and (max-width: 700px) {
   /* phone styles here */
-  .game-layout > .panel-area, .game-layout > .middle-panel > .panel-area {
-    padding: 2px;
+  .game-layout {
+    padding: 4vh 4vw;
   }
 
   .player-panel > .player-name {
     display: none;
   }
-  
+
   .middle-panels > .player-panel {
     padding: 0;
-    width: 2px;
+    width: 5px;
+    border-radius: 1px;
   }
 
   .game-layout > .panel-area > .player-panel {
     padding: 0;
-    height: 0;
+    height: 5px;
+    border-radius: 1px;
+  }
+
+  .game-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .game-display > .currentPlayerDisplay {
+    color: whitesmoke;
+    padding: 2px 10px;
+    border-radius: calc(1rem + 2px);
   }
 }
