@@ -55,7 +55,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
     const chessboard = chessboardRef.current
     const element = e.target as HTMLElement
 
-    if (element.classList.contains('chess-piece') && chessboard && !activePiece) {
+    if (element.classList.contains('chess-piece') && chessboard) {
       const grabX = Math.floor((e.clientX - chessboard.offsetLeft) / GRID_SIZE)
       const grabY = Math.abs(
         Math.abs(
