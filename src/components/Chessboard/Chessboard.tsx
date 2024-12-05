@@ -46,6 +46,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
 
       setActivePiece(element)
       setIsClicked(false)
+      document.body.style.userSelect = 'none'
     }
   }
 
@@ -54,7 +55,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
     const chessboard = chessboardRef.current
     const element = e.target as HTMLElement
 
-    if (element.classList.contains('chess-piece') && chessboard) {
+    if (element.classList.contains('chess-piece') && chessboard && !activePiece) {
       const grabX = Math.floor((e.clientX - chessboard.offsetLeft) / GRID_SIZE)
       const grabY = Math.abs(
         Math.abs(
@@ -145,13 +146,14 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
 
         if (!success) {
           // Resets the piece position
-          activePiece.style.position = 'relative'
+          activePiece.style.position = 'static'
           activePiece.style.removeProperty('top')
           activePiece.style.removeProperty('left')
         }
       }
 
       setActivePiece(null)
+      document.body.style.userSelect = 'auto'
     }
   }
 
