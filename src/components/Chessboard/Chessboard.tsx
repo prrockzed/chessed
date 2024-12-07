@@ -46,6 +46,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
 
       setActivePiece(element)
       setIsClicked(false)
+      document.body.style.userSelect = 'none'
     }
   }
 
@@ -145,13 +146,14 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
 
         if (!success) {
           // Resets the piece position
-          activePiece.style.position = 'relative'
+          activePiece.style.position = 'static'
           activePiece.style.removeProperty('top')
           activePiece.style.removeProperty('left')
         }
       }
 
       setActivePiece(null)
+      document.body.style.userSelect = 'auto'
     }
   }
 
