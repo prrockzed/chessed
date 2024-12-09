@@ -1,7 +1,58 @@
 #app {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   place-content: center;
   height: 100vh;
   background-color: black;
 }
+.chessboard-container {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
 
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #d5c8c8;
+  color: white;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.title {
+  font-size: 24px;
+  margin: 0;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 0;
+  background-color: #333;
+  color: white;
+  width: 100%;
+  position: relative;
+}
+
+.footer-link {
+  color: #779556;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
