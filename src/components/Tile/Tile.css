@@ -59,3 +59,7 @@
 .piece-dead .chess-piece {
   filter: saturate(0%);
 }
+
+.tile.checked {
+  background: radial-gradient(circle, red 20%, white 80%);
+}

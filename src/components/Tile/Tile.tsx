@@ -8,7 +8,7 @@ interface Props {
   num_j: number
   highlight: boolean
   teamLost: boolean
-  style?: React.CSSProperties
+  check: boolean
 }
 
 export default function Tile({
@@ -17,7 +17,7 @@ export default function Tile({
   image,
   highlight,
   teamLost,
-  style
+  check,
 }: Props) {
   const className: string = [
     'tile',
@@ -26,6 +26,7 @@ export default function Tile({
     highlight && 'tile-highlight', // Highlighting the tiles with possible moves
     image && 'chess-piece-tile', // Highlighting the tiles with attacked chess pieces
     teamLost && 'piece-dead', // Highlighting the pieces of the lost team
+    check && 'checked', // Highlighting the king if in check
   ]
     .filter(Boolean)
     .join(' ')
@@ -44,7 +45,7 @@ export default function Tile({
   // Chessboard tiles
   else {
     return (
-      <div className={className} style={style}>
+      <div className={className}>
         {image && (
           <div
             style={{ backgroundImage: `url(${image})` }}

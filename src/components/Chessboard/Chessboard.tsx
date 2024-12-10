@@ -4,7 +4,7 @@ import { Piece, Position } from '../../models'
 import Tile from '../Tile/Tile'
 import { useRef, useState } from 'react'
 import { VERTICAL_AXIS, HORIZONTAL_AXIS, GRID_SIZE } from '../../Constants'
-import { TeamType } from '../../Types'
+import { PieceType, TeamType } from '../../Types'
 
 // Interface deciding the types
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
   pieces: Piece[]
   whoseTurn: TeamType
   loseOrder: TeamType[]
-  iskingChecked: boolean
+  isChecked: boolean
 }
 
 export default function Chessboard({
@@ -20,7 +20,7 @@ export default function Chessboard({
   pieces,
   whoseTurn,
   loseOrder,
-  iskingChecked
+  isChecked,
 }: Props) {
   // Declaring Constants
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null)
@@ -77,7 +77,6 @@ export default function Chessboard({
       setIsClicked(true)
     }
   }
-  const CurrentKingPos = pieces.find((p) => p.isKing && p.team === whoseTurn)
 
   // Function when player tries to move a piece
   function movePiece(e: React.MouseEvent) {
@@ -186,9 +185,7 @@ export default function Chessboard({
             p.samePosition(new Position(i, j))
           )
         : false
-        const isKingTile =
-        iskingChecked && CurrentKingPos?.samePosition(new Position(i, j))
-  
+
       board.push(
         <Tile
           key={`${i},${j}`}
@@ -197,9 +194,11 @@ export default function Chessboard({
           image={image}
           highlight={highlight}
           teamLost={piece ? loseOrder.includes(piece.team) : false}
-          style={{
-            backgroundColor: isKingTile ? 'red' : undefined, 
-          }}
+          check={
+            isChecked &&
+            piece?.type === PieceType.KING &&
+            piece?.team === whoseTurn
+          }
         />
       )
     }
