@@ -19,16 +19,15 @@ export default function Arbiter() {
   const [promotionPawn, setPromotionPawn] = useState<Piece>()
   const modalRef = useRef<HTMLDivElement>(null)
   const checkmateModalRef = useRef<HTMLDivElement>(null)
-  
   // Checks for production/development
   const basePath = window.location.hostname === "localhost" ? "/chessed" : "";
-
   // Function for playing a move
+  const iskingChecked=board.isKingchecked;
   function playMove(playedPiece: Piece, destination: Position): boolean {
     if (playedPiece.possibleMoves === undefined) return false
-
     // Checking if the correct team has played the piece
-    if (playedPiece.team === TeamType.RED && board.totalTurns % 4 !== 1) {
+    if (playedPiece.team === TeamType.RED &&
+        board.totalTurns % 4 !== 1) {
       return false
     } else if (
       playedPiece.team === TeamType.BLUE &&
@@ -259,6 +258,7 @@ export default function Arbiter() {
         playMove={playMove}
         pieces={board.pieces}
         whoseTurn={board.totalTurns}
+        iskingChecked={iskingChecked}
       />
     </>
   )

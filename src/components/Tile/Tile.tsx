@@ -6,9 +6,10 @@ interface Props {
   num_i: number
   num_j: number
   highlight: boolean
+  style?: React.CSSProperties
 }
 
-export default function Tile({ num_i, num_j, image, highlight }: Props) {
+export default function Tile({ num_i, num_j, image, highlight,style }: Props) {
   const className: string = [
     'tile',
     (num_i + num_j) % 2 === 0 && 'dark-tile', // Dark Tiles
@@ -33,7 +34,7 @@ export default function Tile({ num_i, num_j, image, highlight }: Props) {
   // Chessboard tiles
   else {
     return (
-      <div className={className}>
+      <div className={className} style={style}>
         {image && (
           <div
             style={{ backgroundImage: `url(${image})` }}
