@@ -4,14 +4,6 @@ import { initialBoard } from '../../Constants'
 import { PieceType, TeamType } from '../../Types'
 import { Piece, Position } from '../../models'
 import { useRef, useState } from 'react'
-//import {
-//  bishopMove,
-//  kingMove,
-//  knightMove,
-//  pawnMove,
-//  queenMove,
-//  rookMove,
-//} from '../../rules'
 
 export default function Arbiter() {
   // Declaring the constants
@@ -19,37 +11,16 @@ export default function Arbiter() {
   const [promotionPawn, setPromotionPawn] = useState<Piece>()
   const modalRef = useRef<HTMLDivElement>(null)
   const checkmateModalRef = useRef<HTMLDivElement>(null)
-  
+
   // Checks for production/development
-  const basePath = window.location.hostname === "localhost" ? "/chessed" : "";
+  const basePath = window.location.hostname === 'localhost' ? '/chessed' : ''
 
   // Function for playing a move
   function playMove(playedPiece: Piece, destination: Position): boolean {
-    if (playedPiece.possibleMoves === undefined) return false
-
     // Checking if the correct team has played the piece
-    if (playedPiece.team === TeamType.RED && board.totalTurns % 4 !== 1) {
-      return false
-    } else if (
-      playedPiece.team === TeamType.BLUE &&
-      board.totalTurns % 4 !== 2
-    ) {
-      return false
-    } else if (
-      playedPiece.team === TeamType.YELLOW &&
-      board.totalTurns % 4 !== 3
-    ) {
-      return false
-    } else if (
-      playedPiece.team === TeamType.GREEN &&
-      board.totalTurns % 4 !== 0
-    ) {
-      return false
-    }
+    if (playedPiece.team !== board.currentTeam) return false
 
     // Checking for valid move
-    let playedMoveIsValid = false
-
     const validMove = playedPiece.possibleMoves?.some((m) =>
       m.samePosition(destination)
     )
@@ -57,20 +28,13 @@ export default function Arbiter() {
     if (!validMove) return false
 
     // playMove modifies the board state
-    setBoard(() => {
+    setBoard((board) => {
       const clonedBoard = board.clone()
 
-      // Incrementing the totalTurns when the correct piece is played
-      clonedBoard.totalTurns += 1
-
       // Playing a move
-      playedMoveIsValid = clonedBoard.playMove(
-        validMove,
-        playedPiece,
-        destination
-      )
+      clonedBoard.playMove(playedPiece, destination)
 
-      if (clonedBoard.losingTeam !== undefined) {
+      if (clonedBoard.gameOver) {
         checkmateModalRef.current?.classList.remove('hidden')
       }
 
@@ -93,70 +57,8 @@ export default function Arbiter() {
         })
       }
     }
-    return playedMoveIsValid
+    return true
   }
-
-  // Checking if the move is valid
-  //function isValidMove(
-  //  initialPosition: Position,
-  //  desiredPosition: Position,
-  //  type: PieceType,
-  //  team: TeamType
-  //) {
-  //  let validMove = false
-  //
-  //  switch (type) {
-  //    case PieceType.PAWN:
-  //      validMove = pawnMove(
-  //        initialPosition,
-  //        desiredPosition,
-  //        team,
-  //        board.pieces
-  //      )
-  //      break
-  //    case PieceType.KNIGHT:
-  //      validMove = knightMove(
-  //        initialPosition,
-  //        desiredPosition,
-  //        team,
-  //        board.pieces
-  //      )
-  //      break
-  //    case PieceType.BISHOP:
-  //      validMove = bishopMove(
-  //        initialPosition,
-  //        desiredPosition,
-  //        team,
-  //        board.pieces
-  //      )
-  //      break
-  //    case PieceType.ROOK:
-  //      validMove = rookMove(
-  //        initialPosition,
-  //        desiredPosition,
-  //        team,
-  //        board.pieces
-  //      )
-  //      break
-  //    case PieceType.QUEEN:
-  //      validMove = queenMove(
-  //        initialPosition,
-  //        desiredPosition,
-  //        team,
-  //        board.pieces
-  //      )
-  //      break
-  //    case PieceType.KING:
-  //      validMove = kingMove(
-  //        initialPosition,
-  //        desiredPosition,
-  //        team,
-  //        board.pieces
-  //      )
-  //  }
-  //
-  //  return validMove
-  //}
 
   // Function to promote a pawn to the desired piece
   function promotePawn(pieceType: PieceType) {
@@ -202,15 +104,21 @@ export default function Arbiter() {
   }
 
   // Writing the full name of the winning team
-  let teamWon = ''
-  if (board.losingTeam === TeamType.RED) {
-    teamWon = 'Blue, Yellow and Green'
-  } else if (board.losingTeam === TeamType.BLUE) {
-    teamWon = 'Red, Yellow and Green'
-  } else if (board.losingTeam === TeamType.YELLOW) {
-    teamWon = 'Red, Blue and Green'
-  } else if (board.losingTeam === TeamType.GREEN) {
-    teamWon = 'Red, Blue and Green'
+  let teamNames = {
+    [TeamType.RED]: 'Red',
+    [TeamType.BLUE]: 'Blue',
+    [TeamType.YELLOW]: 'Yellow',
+    [TeamType.GREEN]: 'Green',
+  }
+  let teamWon = teamNames[board.currentTeam]
+  let leaderboard = [board.currentTeam, ...board.loseOrder.slice().reverse()]
+
+  let lbPieces = ['Q', 'R', 'N', 'P'] as const
+  let pieceNames = {
+    Q: 'Queen',
+    R: 'Rook',
+    N: 'Knight',
+    P: 'Pawn',
   }
 
   function restartGame() {
@@ -249,7 +157,23 @@ export default function Arbiter() {
       <div className='modal hidden' ref={checkmateModalRef}>
         <div className='modal-body'>
           <div className='checkmate-body'>
-            <span>Winning teams: {teamWon}!</span>
+            <span>Winner: {teamWon}!</span>
+            <table>
+              <tbody>
+                {leaderboard.map((team, i) => (
+                  <tr key={team} className='team'>
+                    <td>{i + 1}.</td>
+                    <td>{teamNames[team]}</td>
+                    <td>
+                      <img
+                        src={`${basePath}/assets/images/${team}${lbPieces[i]}.png`}
+                        alt={`${teamNames[team]} ${pieceNames[lbPieces[i]]}`}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
             <button onClick={restartGame}>Play Again</button>
           </div>
         </div>
@@ -258,7 +182,8 @@ export default function Arbiter() {
       <Chessboard
         playMove={playMove}
         pieces={board.pieces}
-        whoseTurn={board.totalTurns}
+        whoseTurn={board.currentTeam}
+        loseOrder={board.loseOrder}
       />
     </>
   )

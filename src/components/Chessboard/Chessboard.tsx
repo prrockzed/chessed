@@ -4,15 +4,22 @@ import { Piece, Position } from '../../models'
 import Tile from '../Tile/Tile'
 import { useRef, useState } from 'react'
 import { VERTICAL_AXIS, HORIZONTAL_AXIS, GRID_SIZE } from '../../Constants'
+import { TeamType } from '../../Types'
 
 // Interface deciding the types
 interface Props {
   playMove: (piece: Piece, position: Position) => boolean
   pieces: Piece[]
-  whoseTurn: number
+  whoseTurn: TeamType
+  loseOrder: TeamType[]
 }
 
-export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
+export default function Chessboard({
+  playMove,
+  pieces,
+  whoseTurn,
+  loseOrder,
+}: Props) {
   // Declaring Constants
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null)
   const [grabPosition, setGrabPosition] = useState<Position>(
@@ -43,6 +50,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
       element.style.position = 'absolute'
       element.style.left = `${x}px`
       element.style.top = `${y}px`
+      element.style.zIndex = '10'
 
       setActivePiece(element)
       setIsClicked(false)
@@ -68,7 +76,6 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
       setIsClicked(true)
     }
   }
-
 
   // Function when player tries to move a piece
   function movePiece(e: React.MouseEvent) {
@@ -131,7 +138,6 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
   // Function when player drops a piece
   function dropPiece(e: React.MouseEvent) {
     const chessboard = chessboardRef.current
-
     // Dropping the pieces on the right grid
     if (activePiece && chessboard) {
       const x = Math.floor((e.clientX - chessboard.offsetLeft) / GRID_SIZE)
@@ -149,6 +155,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
           activePiece.style.position = 'static'
           activePiece.style.removeProperty('top')
           activePiece.style.removeProperty('left')
+          activePiece.style.removeProperty('z-index')
         }
       }
 
@@ -187,6 +194,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
           num_j={num_j}
           image={image}
           highlight={highlight}
+          teamLost={piece ? loseOrder.includes(piece.team) : false}
         />
       )
     }
@@ -198,7 +206,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
         onMouseMove={(e) => {
           if (!isClicked) {
             movePiece(e)
-          }   
+          }
         }}
         onMouseDown={(e) => grabPiece(e)}
         onClick={(e) => clickPiece(e)}
@@ -207,7 +215,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
         ref={chessboardRef}
       >
         {board}
-        <PlayerName whoseTurn={whoseTurn} />
+        <PlayerName whoseTurn={whoseTurn} lostTeams={loseOrder} />
       </div>
     </>
   )

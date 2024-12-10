@@ -15,6 +15,7 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: 43px;
+  z-index: 1;
 }
 
 .tile .chess-piece:hover {
@@ -52,4 +53,9 @@
   height: 45px;
   border: 2.5px solid rgba(0, 0, 0);
   border-radius: 50%;
+  z-index: 2;
+}
+
+.piece-dead .chess-piece {
+  filter: saturate(0%);
 }

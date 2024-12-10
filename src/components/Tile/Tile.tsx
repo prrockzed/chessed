@@ -6,15 +6,23 @@ interface Props {
   num_i: number
   num_j: number
   highlight: boolean
+  teamLost: boolean
 }
 
-export default function Tile({ num_i, num_j, image, highlight }: Props) {
+export default function Tile({
+  num_i,
+  num_j,
+  image,
+  highlight,
+  teamLost,
+}: Props) {
   const className: string = [
     'tile',
     (num_i + num_j) % 2 === 0 && 'dark-tile', // Dark Tiles
     (num_i + num_j) % 2 !== 0 && 'light-tile', // Light Tiles
     highlight && 'tile-highlight', // Highlighting the tiles with possible moves
     image && 'chess-piece-tile', // Highlighting the tiles with attacked chess pieces
+    teamLost && 'piece-dead', // Highlighting the pieces of the lost team
   ]
     .filter(Boolean)
     .join(' ')
