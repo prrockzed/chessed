@@ -154,6 +154,29 @@ export class Board {
     }
   }
 
+  //cheking if current's team's king is checked
+  get isKingchecked() {
+    const simulatedBoard = this.clone()
+    const king = simulatedBoard.pieces.find((p) => p.isKing && p.team === simulatedBoard.currentTeam)!
+    for (const enemy of simulatedBoard.pieces.filter((p) => { return p.team !== simulatedBoard.currentTeam })) {
+      enemy.possibleMoves = simulatedBoard.getValidMoves(
+        enemy,
+        simulatedBoard.pieces
+      )
+      if(enemy.possibleMoves?.some( (m) => {
+        return m.samePosition(king.position)
+      })){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  currentKingpos():Position{
+    const king = this.pieces.find((p) => p.isKing && p.team === this.currentTeam)!
+    return king.position;
+  }
+  
   // Getting the valid moves of the pieces which is being played
   getValidMoves(piece: Piece, boardState: Piece[]): Position[] {
     switch (piece.type) {
@@ -188,13 +211,13 @@ export class Board {
       // Deciding the direction of castling for different players
       const direction =
         destinationPiece.team === TeamType.RED ||
-        playedPiece.team === TeamType.YELLOW
+          playedPiece.team === TeamType.YELLOW
           ? destinationPiece.position.x - playedPiece.position.x > 0
             ? 1
             : -1
           : destinationPiece.position.y - playedPiece.position.y > 0
-          ? 1
-          : -1
+            ? 1
+            : -1
 
       // Implementing the direction of castling
       if (

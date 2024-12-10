@@ -12,6 +12,7 @@ interface Props {
   pieces: Piece[]
   whoseTurn: TeamType
   loseOrder: TeamType[]
+  iskingChecked: boolean
 }
 
 export default function Chessboard({
@@ -19,6 +20,7 @@ export default function Chessboard({
   pieces,
   whoseTurn,
   loseOrder,
+  iskingChecked
 }: Props) {
   // Declaring Constants
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null)
@@ -27,7 +29,6 @@ export default function Chessboard({
   )
   const [isClicked, setIsClicked] = useState<boolean>(false)
   const chessboardRef = useRef<HTMLDivElement>(null)
-
   // Function when player grabs a  piece
   function grabPiece(e: React.MouseEvent) {
     // Grabbing the pieces off the chessboard
@@ -76,6 +77,7 @@ export default function Chessboard({
       setIsClicked(true)
     }
   }
+  const CurrentKingPos = pieces.find((p) => p.isKing && p.team === whoseTurn)
 
   // Function when player tries to move a piece
   function movePiece(e: React.MouseEvent) {
@@ -163,7 +165,6 @@ export default function Chessboard({
       document.body.style.userSelect = 'auto'
     }
   }
-
   // Setting the four player chessboard
   let board = []
 
@@ -185,8 +186,9 @@ export default function Chessboard({
             p.samePosition(new Position(i, j))
           )
         : false
-
-      // Made chessboard with all the 'useful' squares
+        const isKingTile =
+        iskingChecked && CurrentKingPos?.samePosition(new Position(i, j))
+  
       board.push(
         <Tile
           key={`${i},${j}`}
@@ -195,11 +197,13 @@ export default function Chessboard({
           image={image}
           highlight={highlight}
           teamLost={piece ? loseOrder.includes(piece.team) : false}
+          style={{
+            backgroundColor: isKingTile ? 'red' : undefined, 
+          }}
         />
       )
     }
   }
-
   return (
     <>
       <div

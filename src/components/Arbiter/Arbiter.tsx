@@ -16,6 +16,7 @@ export default function Arbiter() {
   const basePath = window.location.hostname === 'localhost' ? '/chessed' : ''
 
   // Function for playing a move
+  const iskingChecked=board.isKingchecked;
   function playMove(playedPiece: Piece, destination: Position): boolean {
     // Checking if the correct team has played the piece
     if (playedPiece.team !== board.currentTeam) return false
@@ -184,6 +185,7 @@ export default function Arbiter() {
         pieces={board.pieces}
         whoseTurn={board.currentTeam}
         loseOrder={board.loseOrder}
+        iskingChecked={iskingChecked}
       />
     </>
   )

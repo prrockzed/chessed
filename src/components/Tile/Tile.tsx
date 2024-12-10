@@ -1,3 +1,4 @@
+import React from 'react'
 import './Tile.css'
 
 // Interface for deciding the types
@@ -7,6 +8,7 @@ interface Props {
   num_j: number
   highlight: boolean
   teamLost: boolean
+  style?: React.CSSProperties
 }
 
 export default function Tile({
@@ -15,6 +17,7 @@ export default function Tile({
   image,
   highlight,
   teamLost,
+  style
 }: Props) {
   const className: string = [
     'tile',
@@ -41,7 +44,7 @@ export default function Tile({
   // Chessboard tiles
   else {
     return (
-      <div className={className}>
+      <div className={className} style={style}>
         {image && (
           <div
             style={{ backgroundImage: `url(${image})` }}
