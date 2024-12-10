@@ -4,15 +4,17 @@ import { Piece, Position } from '../../models'
 import Tile from '../Tile/Tile'
 import { useRef, useState } from 'react'
 import { VERTICAL_AXIS, HORIZONTAL_AXIS, GRID_SIZE } from '../../Constants'
+import {TeamType } from '../../Types'
 
 // Interface deciding the types
 interface Props {
   playMove: (piece: Piece, position: Position) => boolean
   pieces: Piece[]
   whoseTurn: number
+  iskingChecked: boolean
 }
 
-export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
+export default function Chessboard({ playMove, pieces, whoseTurn ,iskingChecked}: Props) {
   // Declaring Constants
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null)
   const [grabPosition, setGrabPosition] = useState<Position>(
@@ -20,7 +22,6 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
   )
   const [isClicked, setIsClicked] = useState<boolean>(false)
   const chessboardRef = useRef<HTMLDivElement>(null)
-
   // Function when player grabs a  piece
   function grabPiece(e: React.MouseEvent) {
     // Grabbing the pieces off the chessboard
@@ -68,8 +69,18 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
       setIsClicked(true)
     }
   }
-
-
+  const CurrentKingPos = pieces.find((p) => p.isKing && p.team === getcurrentTeam())
+  function getcurrentTeam(): TeamType {
+    if (whoseTurn % 4 === 1) {
+      return TeamType.RED
+    } else if (whoseTurn % 4 === 2) {
+      return TeamType.BLUE
+    } else if (whoseTurn % 4 === 3) {
+      return TeamType.YELLOW
+    } else {
+      return TeamType.GREEN
+    }
+  }
   // Function when player tries to move a piece
   function movePiece(e: React.MouseEvent) {
     const chessboard = chessboardRef.current
@@ -156,7 +167,6 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
       document.body.style.userSelect = 'auto'
     }
   }
-
   // Setting the four player chessboard
   let board = []
 
@@ -178,8 +188,9 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
             p.samePosition(new Position(i, j))
           )
         : false
-
-      // Made chessboard with all the 'useful' squares
+        const isKingTile =
+        iskingChecked && CurrentKingPos?.samePosition(new Position(i, j))
+  
       board.push(
         <Tile
           key={`${i},${j}`}
@@ -187,11 +198,13 @@ export default function Chessboard({ playMove, pieces, whoseTurn }: Props) {
           num_j={num_j}
           image={image}
           highlight={highlight}
+          style={{
+            backgroundColor: isKingTile ? 'red' : undefined, 
+          }}
         />
       )
     }
   }
-
   return (
     <>
       <div
