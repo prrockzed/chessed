@@ -4,17 +4,24 @@ import { Piece, Position } from '../../models'
 import Tile from '../Tile/Tile'
 import { useRef, useState } from 'react'
 import { VERTICAL_AXIS, HORIZONTAL_AXIS, GRID_SIZE } from '../../Constants'
-import {TeamType } from '../../Types'
+import { PieceType, TeamType } from '../../Types'
 
 // Interface deciding the types
 interface Props {
   playMove: (piece: Piece, position: Position) => boolean
   pieces: Piece[]
-  whoseTurn: number
-  iskingChecked: boolean
+  whoseTurn: TeamType
+  loseOrder: TeamType[]
+  isChecked: boolean
 }
 
-export default function Chessboard({ playMove, pieces, whoseTurn ,iskingChecked}: Props) {
+export default function Chessboard({
+  playMove,
+  pieces,
+  whoseTurn,
+  loseOrder,
+  isChecked,
+}: Props) {
   // Declaring Constants
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null)
   const [grabPosition, setGrabPosition] = useState<Position>(
@@ -44,6 +51,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn ,iskingChecked}
       element.style.position = 'absolute'
       element.style.left = `${x}px`
       element.style.top = `${y}px`
+      element.style.zIndex = '10'
 
       setActivePiece(element)
       setIsClicked(false)
@@ -69,18 +77,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn ,iskingChecked}
       setIsClicked(true)
     }
   }
-  const CurrentKingPos = pieces.find((p) => p.isKing && p.team === getcurrentTeam())
-  function getcurrentTeam(): TeamType {
-    if (whoseTurn % 4 === 1) {
-      return TeamType.RED
-    } else if (whoseTurn % 4 === 2) {
-      return TeamType.BLUE
-    } else if (whoseTurn % 4 === 3) {
-      return TeamType.YELLOW
-    } else {
-      return TeamType.GREEN
-    }
-  }
+
   // Function when player tries to move a piece
   function movePiece(e: React.MouseEvent) {
     const chessboard = chessboardRef.current
@@ -142,7 +139,6 @@ export default function Chessboard({ playMove, pieces, whoseTurn ,iskingChecked}
   // Function when player drops a piece
   function dropPiece(e: React.MouseEvent) {
     const chessboard = chessboardRef.current
-
     // Dropping the pieces on the right grid
     if (activePiece && chessboard) {
       const x = Math.floor((e.clientX - chessboard.offsetLeft) / GRID_SIZE)
@@ -160,6 +156,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn ,iskingChecked}
           activePiece.style.position = 'static'
           activePiece.style.removeProperty('top')
           activePiece.style.removeProperty('left')
+          activePiece.style.removeProperty('z-index')
         }
       }
 
@@ -188,9 +185,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn ,iskingChecked}
             p.samePosition(new Position(i, j))
           )
         : false
-        const isKingTile =
-        iskingChecked && CurrentKingPos?.samePosition(new Position(i, j))
-  
+
       board.push(
         <Tile
           key={`${i},${j}`}
@@ -198,9 +193,12 @@ export default function Chessboard({ playMove, pieces, whoseTurn ,iskingChecked}
           num_j={num_j}
           image={image}
           highlight={highlight}
-          style={{
-            backgroundColor: isKingTile ? 'red' : undefined, 
-          }}
+          teamLost={piece ? loseOrder.includes(piece.team) : false}
+          check={
+            isChecked &&
+            piece?.type === PieceType.KING &&
+            piece?.team === whoseTurn
+          }
         />
       )
     }
@@ -211,7 +209,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn ,iskingChecked}
         onMouseMove={(e) => {
           if (!isClicked) {
             movePiece(e)
-          }   
+          }
         }}
         onMouseDown={(e) => grabPiece(e)}
         onClick={(e) => clickPiece(e)}
@@ -220,7 +218,7 @@ export default function Chessboard({ playMove, pieces, whoseTurn ,iskingChecked}
         ref={chessboardRef}
       >
         {board}
-        <PlayerName whoseTurn={whoseTurn} />
+        <PlayerName whoseTurn={whoseTurn} lostTeams={loseOrder} />
       </div>
     </>
   )

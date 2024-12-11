@@ -30,18 +30,10 @@
   background-color: rgb(85, 249, 85);
 }
 
-#RED {
+.player-active {
   opacity: 1;
 }
 
-#YELLOW {
-  opacity: 1;
-}
-
-#BLUE {
-  opacity: 1;
-}
-
-#GREEN {
-  opacity: 1;
+.player-lost {
+  background-color: #eeeeee;
 }

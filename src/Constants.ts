@@ -87,7 +87,7 @@ export const initialBoard: Board = new Board(
     new Piece(new Position(12, 9), PieceType.PAWN, TeamType.GREEN, false),
     new Piece(new Position(12, 10), PieceType.PAWN, TeamType.GREEN, false),
   ],
-  1
+  0
 )
 
 initialBoard.calculateAllMoves()

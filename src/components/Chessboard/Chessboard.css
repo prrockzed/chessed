@@ -13,6 +13,7 @@
   right: 0px;
   bottom: 0px;
   left: 0px;
+  z-index: 1000;
 }
 
 .modal.hidden {
@@ -21,14 +22,15 @@
 
 .modal > .modal-body {
   position: absolute;
-  top: calc(50% - 75px);
+  top: 50%;
+  transform: translateY(-50%);
   left: calc(50% - 350px);
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: 150px;
   width: 700px;
   background-color: rgba(0, 0, 0, 0.75);
+  padding: 20px 0;
 }
 
 .modal > .modal-body > img {
@@ -46,11 +48,22 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  width: 45%;
 }
 
 .modal > .modal-body > .checkmate-body > span {
   font-size: 28px;
   color: white;
+  text-align: center;
+}
+
+.modal > .modal-body > .checkmate-body .team {
+  font-size: 20px;
+  color: white;
+}
+
+.modal > .modal-body > .checkmate-body td:nth-child(2) {
+  width: 100%;
 }
 
 .modal > .modal-body > .checkmate-body > button {

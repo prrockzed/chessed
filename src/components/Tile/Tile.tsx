@@ -1,3 +1,4 @@
+import React from 'react'
 import './Tile.css'
 
 // Interface for deciding the types
@@ -6,16 +7,26 @@ interface Props {
   num_i: number
   num_j: number
   highlight: boolean
-  style?: React.CSSProperties
+  teamLost: boolean
+  check: boolean
 }
 
-export default function Tile({ num_i, num_j, image, highlight,style }: Props) {
+export default function Tile({
+  num_i,
+  num_j,
+  image,
+  highlight,
+  teamLost,
+  check,
+}: Props) {
   const className: string = [
     'tile',
     (num_i + num_j) % 2 === 0 && 'dark-tile', // Dark Tiles
     (num_i + num_j) % 2 !== 0 && 'light-tile', // Light Tiles
     highlight && 'tile-highlight', // Highlighting the tiles with possible moves
     image && 'chess-piece-tile', // Highlighting the tiles with attacked chess pieces
+    teamLost && 'piece-dead', // Highlighting the pieces of the lost team
+    check && 'checked', // Highlighting the king if in check
   ]
     .filter(Boolean)
     .join(' ')
@@ -34,7 +45,7 @@ export default function Tile({ num_i, num_j, image, highlight,style }: Props) {
   // Chessboard tiles
   else {
     return (
-      <div className={className} style={style}>
+      <div className={className}>
         {image && (
           <div
             style={{ backgroundImage: `url(${image})` }}
