@@ -2,10 +2,12 @@
   display: flex;
   flex-direction: column;
   padding: 20px;
+  gap: 10px;
 }
 
 .game-layout > .middle-panel {
   display: flex;
+  gap: 10px;
 }
 
 .game-layout > .panel-area,
@@ -19,11 +21,13 @@
   writing-mode: vertical-rl;
   height: calc(var(--tile-size) * 8);
   width: 0.5vw;
+  padding: 0 12px;
 }
 
 .game-layout > .panel-area > .player-panel {
   height: 0.5vw;
   width: calc(var(--tile-size) * 8);
+  padding: 12px 0;
 }
 
 div#left-panel {
@@ -31,12 +35,10 @@ div#left-panel {
 }
 
 .player-panel {
-  padding: 12px;
-  border: 2px solid transparent;
-  border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: calc(var(--tile-size) * 0.1);
 }
 
 .game-display {
