@@ -50,12 +50,21 @@
   flex-direction: column;
   padding: 10px;
   gap: 24px;
+  width: 45%;
 }
 
 .modal > .modal-body > .checkmate-body > span {
   font-size: 1.5rem;
   text-align: center;
+}
+
+.modal > .modal-body > .checkmate-body .team {
+  font-size: 20px;
   color: white;
+}
+
+.modal > .modal-body > .checkmate-body td:nth-child(2) {
+  width: 100%;
 }
 
 .modal > .modal-body > .checkmate-body > button {

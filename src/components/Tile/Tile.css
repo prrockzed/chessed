@@ -17,12 +17,8 @@
   background-size: var(--chess-piece-size);
 }
 
-.tile .chess-piece.cursor-grab:hover {
+.tile .chess-piece:hover {
   cursor: grab;
-}
-
-.tile .chess-piece.cursor-pointer:hover {
-  cursor: pointer;
 }
 
 .tile .chess-piece:active {
@@ -56,4 +52,13 @@
   height: var(--tile-highlight-chess-piece-size);
   border: 2.5px solid rgba(0, 0, 0);
   border-radius: 50%;
+  z-index: 2;
+}
+
+.piece-dead .chess-piece {
+  filter: saturate(0%);
+}
+
+.tile.checked {
+  background: radial-gradient(circle, red 20%, white 80%);
 }

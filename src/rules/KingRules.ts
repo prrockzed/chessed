@@ -332,8 +332,6 @@ export const getCastlingMoves = (
 
     // Looping through all enemy pieces
     for (const enemy of enemyPieces) {
-      if (enemy.possibleMoves === undefined) continue
-
       // Checking if the concerned tiles for castling has the same position
       // as the possible moves of the enemy
       for (const move of enemy.possibleMoves) {

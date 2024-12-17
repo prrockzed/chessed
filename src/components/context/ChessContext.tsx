@@ -3,7 +3,7 @@ import { TeamType } from "../../Types";
 
 interface ChessContextProps {
   currentPlayer: TeamType;
-  setCurrentPlayerByWhoseTurn: (whoseTurn: number) => void;
+  setCurrentPlayerByWhoseTurn: (whoseTurn: TeamType) => void;
 }
 
 export const ChessContext = createContext<ChessContextProps>({
@@ -12,31 +12,13 @@ export const ChessContext = createContext<ChessContextProps>({
 });
 
 /** Provider component for the chess context, provides currentPlayer, interactionMode */
-export function ChessProvider({ whoseTurn, children }: { whoseTurn: number, children: React.ReactNode }) {
-  const getCurrentPlayerByWhoseTurn = (whoseTurn: number): TeamType => {
-    const playerID: number = whoseTurn % 4;
-    switch (playerID) {
-      case 0:
-        return TeamType.GREEN;
-      case 1:
-        return TeamType.RED;
-      case 2:
-        return TeamType.BLUE;
-      case 3:
-        return TeamType.YELLOW;
-      default:
-        return TeamType.RED;
-    }
-  };
-
-  const [currentPlayer, setCurrentPlayer] = useState<TeamType>(
-    getCurrentPlayerByWhoseTurn(whoseTurn)
-  );
+export function ChessProvider({ whoseTurn, children }: { whoseTurn: TeamType, children: React.ReactNode }) {
+  const [currentPlayer, setCurrentPlayer] = useState<TeamType>(whoseTurn);
 
   /** memoized function to set the current player by whose turn as input */
   // fixes the function behavior, function doesnt change on re-render, only changes when input differs
-  const setCurrentPlayerByWhoseTurn = useCallback((whoseTurn: number) => {
-    setCurrentPlayer(getCurrentPlayerByWhoseTurn(whoseTurn));
+  const setCurrentPlayerByWhoseTurn = useCallback((whoseTurn: TeamType) => {
+    setCurrentPlayer(whoseTurn);
   }, []);  
 
   useEffect(() => {

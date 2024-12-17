@@ -7,7 +7,7 @@ export class Piece {
   position: Position
   type: PieceType
   team: TeamType
-  possibleMoves?: Position[]
+  possibleMoves: Position[]
   hasMoved: boolean
 
   constructor(
@@ -17,7 +17,7 @@ export class Piece {
     hasMoved: boolean,
     possibleMoves: Position[] = []
   ) {
-    const basePath = window.location.hostname === "localhost" ? "chessed/" : "";
+    const basePath = window.location.hostname === 'localhost' ? 'chessed/' : ''
 
     this.image = `${basePath}assets/images/${team}${type}.png`
     this.position = position

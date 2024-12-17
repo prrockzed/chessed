@@ -3,13 +3,17 @@ import { Piece, Position } from "../../models";
 import Tile from "../Tile/Tile";
 import { useEffect, useRef, useState } from "react";
 import { VERTICAL_AXIS, HORIZONTAL_AXIS } from "../../Constants";
+import { PieceType, TeamType } from '../../Types'
+import { useChessContext } from "../context/ChessContext";
 
 interface Props {
   playMove: (piece: Piece, position: Position) => boolean;
   pieces: Piece[];
+  loseOrder: TeamType[];
+  isChecked: boolean;
 }
 
-export default function Chessboard({ playMove, pieces }: Props) {
+export default function Chessboard({ playMove, pieces, loseOrder, isChecked }: Props) {
   
   // Dynamic grid size calculation
   const getGridSize = () => {
@@ -18,6 +22,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
     return window.innerWidth > 768 ? 2.5 * rem : vw / 14;
   };
   const GRID_SIZE = getGridSize();
+  const { currentPlayer: whoseTurn } = useChessContext();
 
   // Piece tracking states
   const [currentPiece, setCurrentPiece] = useState<Piece | null>(null);
@@ -95,6 +100,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
       setCurrentPiece(pieces.find(p => p.samePosition(new Position(grabX, grabY))) || null);
       setActivePieceElement(element);
       setShowPossibleMoves(true);
+      document.body.style.userSelect = 'none';
     }
   };
 
@@ -139,6 +145,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
         resetPiecePosition(targetElement);
         setSelectedPieceElement(activePieceElement);
         setActivePieceElement(null);
+        document.body.style.userSelect = 'auto';
         return;
       }
 
@@ -150,6 +157,7 @@ export default function Chessboard({ playMove, pieces }: Props) {
 
       setActivePieceElement(null);
       setShowPossibleMoves(false);
+      document.body.style.userSelect = 'auto';
     }
   };
 
@@ -177,6 +185,12 @@ export default function Chessboard({ playMove, pieces }: Props) {
             num_j={j}
             image={piece?.image}
             highlight={!!highlight}
+            teamLost={piece ? loseOrder.includes(piece.team) : false}
+            check={
+              isChecked &&
+              piece?.type === PieceType.KING &&
+              piece?.team === whoseTurn
+            }
           />
         );
       }

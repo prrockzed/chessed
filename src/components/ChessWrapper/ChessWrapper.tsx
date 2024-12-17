@@ -1,5 +1,6 @@
 import "./ChessWrapper.css";
 import { useChessContext } from "../context/ChessContext";
+import { TeamType } from "../../Types";
 
 /** Wrapper component for the chess board, holds player panels surrounding the board */
 export default function ChessWrapper({
@@ -8,7 +9,6 @@ export default function ChessWrapper({
   children: React.ReactNode;
 }) {
   const { currentPlayer } = useChessContext();
-
   const players = [
     { name: "Red Player", color: "red", id: "r" },
     { name: "Blue Player", color: "blue", id: "b" },
@@ -16,7 +16,10 @@ export default function ChessWrapper({
     { name: "Green Player", color: "green", id: "g" },
   ];
 
+  const lostTeams: TeamType[] = [];
+
   const displayBgColor = players.find((p) => p.id === currentPlayer)?.color || "grey";
+  const lostPlayerColor = "#eeeeee";
 
   return (
     <div className="chess-wrapper">
@@ -29,32 +32,32 @@ export default function ChessWrapper({
         <div className="panel-area">
           <PlayerPanel
             name="Yellow Player"
-            color="yellow"
-            isActive={currentPlayer === "y"}
+            color={ lostTeams.includes(TeamType.YELLOW) ? lostPlayerColor :  "yellow"}
+            isActive={currentPlayer === "y" && !lostTeams.includes(TeamType.YELLOW)}
           />
         </div>
         <div className="middle-panel">
           <div className="panel-area middle-panels" id="left-panel">
             <PlayerPanel
               name="Blue Player"
-              color="blue"
-              isActive={currentPlayer === "b"}
+              color={ lostTeams.includes(TeamType.BLUE) ? lostPlayerColor :  "blue"}
+              isActive={currentPlayer === "b" && !lostTeams.includes(TeamType.BLUE)}
             />
           </div>
           <div className="panel-area chessboard-container">{children}</div>
           <div className="panel-area middle-panels">
             <PlayerPanel
               name="Green Player"
-              color="green"
-              isActive={currentPlayer === "g"}
+              color={ lostTeams.includes(TeamType.GREEN) ? lostPlayerColor :  "green"}
+              isActive={currentPlayer === "g" && !lostTeams.includes(TeamType.GREEN)}
             />
           </div>
         </div>
         <div className="panel-area">
           <PlayerPanel
             name="Red Player"
-            color="red"
-            isActive={currentPlayer === "r"}
+            color={ lostTeams.includes(TeamType.RED) ? lostPlayerColor :  "red"}
+            isActive={currentPlayer === "r" && !lostTeams.includes(TeamType.RED)}
           />
         </div>
       </div>

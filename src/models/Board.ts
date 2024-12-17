@@ -15,25 +15,35 @@ import {
 export class Board {
   pieces: Piece[]
   totalTurns: number
-  losingTeam?: TeamType
+  gameOver: boolean = false
+  loseOrder: TeamType[] = []
+  currentTeam: TeamType
 
   // Defining the constructor
-  constructor(pieces: Piece[], totalTurns: number) {
+  constructor(
+    pieces: Piece[],
+    totalTurns: number,
+    currentTeam = TeamType.RED,
+    loseOrder: TeamType[] = []
+  ) {
     this.pieces = pieces
     this.totalTurns = totalTurns
+    this.currentTeam = currentTeam
+    this.loseOrder = loseOrder
   }
 
-  // Getting the current playing team
-  get currentTeam(): TeamType {
-    if (this.totalTurns % 4 === 1) {
-      return TeamType.RED
-    } else if (this.totalTurns % 4 === 2) {
-      return TeamType.BLUE
-    } else if (this.totalTurns % 4 === 3) {
-      return TeamType.YELLOW
-    } else {
-      return TeamType.GREEN
-    }
+  // Red -> Blue -> Yellow -> Green
+  // Red plays first
+  // in case of checkmate, call getNextTeam before pushing to loseOrder
+  getNextTeam(): TeamType {
+    let teams = [
+      TeamType.RED,
+      TeamType.BLUE,
+      TeamType.YELLOW,
+      TeamType.GREEN,
+    ].filter((t) => !this.loseOrder.includes(t))
+
+    return teams[(teams.indexOf(this.currentTeam) + 1) % teams.length]
   }
 
   calculateAllMoves() {
@@ -44,8 +54,6 @@ export class Board {
 
     // Calculate castling moves
     for (const king of this.pieces.filter((p) => p.isKing)) {
-      if (king.possibleMoves === undefined) continue
-
       king.possibleMoves = [
         ...king.possibleMoves,
         ...getCastlingMoves(king, this.pieces),
@@ -67,13 +75,20 @@ export class Board {
     if (
       this.pieces
         .filter((p) => p.team === this.currentTeam)
-        .some(
-          (p) => p.possibleMoves !== undefined && p.possibleMoves.length > 0
-        )
+        .some((p) => p.possibleMoves.length > 0)
     )
       return
 
-    this.losingTeam = this.currentTeam
+    let lostTeam = this.currentTeam
+
+    this.currentTeam = this.getNextTeam()
+    this.loseOrder.push(lostTeam)
+
+    if (this.loseOrder.length === 3) {
+      this.gameOver = true
+    } else {
+      this.calculateAllMoves()
+    }
   }
 
   checkCurrentTeamMoves() {
@@ -81,8 +96,6 @@ export class Board {
     for (const piece of this.pieces.filter(
       (p) => p.team === this.currentTeam
     )) {
-      if (piece.possibleMoves === undefined) continue
-
       // Simulate all the piece moves
       for (const move of piece.possibleMoves) {
         const simulatedBoard = this.clone()
@@ -141,6 +154,21 @@ export class Board {
     }
   }
 
+  get isChecked() {
+    const simulatedBoard = this.clone()
+    const king = simulatedBoard.pieces.find(
+      (p) => p.isKing && p.team === simulatedBoard.currentTeam
+    )!
+
+    return simulatedBoard.pieces
+      .filter((p) => p.team !== simulatedBoard.currentTeam)
+      .some((enemy) =>
+        simulatedBoard
+          .getValidMoves(enemy, simulatedBoard.pieces)
+          .some((m) => m.samePosition(king.position))
+      )
+  }
+
   // Getting the valid moves of the pieces which is being played
   getValidMoves(piece: Piece, boardState: Piece[]): Position[] {
     switch (piece.type) {
@@ -161,11 +189,7 @@ export class Board {
     }
   }
 
-  playMove(
-    validMove: boolean,
-    playedPiece: Piece,
-    destination: Position
-  ): boolean {
+  playMove(playedPiece: Piece, destination: Position) {
     const destinationPiece = this.pieces.find((p) =>
       p.samePosition(destination)
     )
@@ -196,8 +220,10 @@ export class Board {
         this.pieces = this.pieces.map((p) => {
           if (p.samePiecePosition(playedPiece)) {
             p.position.x = newKingXPosition
+            p.hasMoved = true
           } else if (p.samePiecePosition(destinationPiece)) {
             p.position.x = newKingXPosition - direction
+            p.hasMoved = true
           }
 
           return p
@@ -214,43 +240,43 @@ export class Board {
           return p
         })
       }
+      this.totalTurns++
+      this.currentTeam = this.getNextTeam()
 
       this.calculateAllMoves()
-      return true
+      return
     }
 
-    // If it is a valid move
-    if (validMove) {
-      // Updated the pieces position
-      // And if a piece is attacked, removes it
-      this.pieces = this.pieces.reduce((results, piece) => {
-        // Piece that we are currently playing
-        if (piece.samePiecePosition(playedPiece)) {
-          piece.position.x = destination.x
-          piece.position.y = destination.y
-          piece.hasMoved = true
+    // Updated the pieces position
+    // And if a piece is attacked, removes it
+    this.pieces = this.pieces.reduce((results, piece) => {
+      // Piece that we are currently playing
+      if (piece.samePiecePosition(playedPiece)) {
+        piece.position.x = destination.x
+        piece.position.y = destination.y
+        piece.hasMoved = true
 
-          results.push(piece)
-        } else if (!piece.samePosition(destination)) {
-          results.push(piece)
-        }
+        results.push(piece)
+      } else if (!piece.samePosition(destination)) {
+        results.push(piece)
+      }
 
-        return results
-      }, [] as Piece[])
+      return results
+    }, [] as Piece[])
 
-      this.calculateAllMoves()
-    } else {
-      return false
-    }
+    this.totalTurns++
+    this.currentTeam = this.getNextTeam()
 
-    return true
+    this.calculateAllMoves()
   }
 
   // Clone function of the board
   clone(): Board {
     return new Board(
       this.pieces.map((p) => p.clone()),
-      this.totalTurns
+      this.totalTurns,
+      this.currentTeam,
+      this.loseOrder
     )
   }
 }
