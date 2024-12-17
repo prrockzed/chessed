@@ -39,6 +39,17 @@ export class Piece {
     return this.type === PieceType.KING
   }
 
+  get isQueen(): boolean {
+    return this.type === PieceType.QUEEN
+  }
+
+  get isBishop(): boolean {
+    return this.type === PieceType.BISHOP
+  }
+  get isKnight(): boolean {
+    return this.type === PieceType.KNIGHT
+  }
+
   // function for same piece position
   samePiecePosition(otherPiece: Piece): boolean {
     return this.position.samePosition(otherPiece.position)

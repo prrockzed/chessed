@@ -4,11 +4,18 @@ import { initialBoard } from '../../Constants'
 import { PieceType, TeamType } from '../../Types'
 import { Piece, Position } from '../../models'
 import { useRef, useState } from 'react'
-
+import "./Arbiter.css"
 export default function Arbiter() {
   // Declaring the constants
   const [board, setBoard] = useState<Board>(initialBoard.clone())
+  const [boardHistory, setBoardHistory] = useState<Board[]>([initialBoard.clone()])
   const [promotionPawn, setPromotionPawn] = useState<Piece>()
+  const [moveHistory, setMoveHistory] = useState<{ [key in TeamType]: string[] }>({
+    [TeamType.RED]: [],
+    [TeamType.BLUE]: [],
+    [TeamType.YELLOW]: [],
+    [TeamType.GREEN]: [],
+  });
   const modalRef = useRef<HTMLDivElement>(null)
   const checkmateModalRef = useRef<HTMLDivElement>(null)
 
@@ -17,6 +24,9 @@ export default function Arbiter() {
 
   // Function for playing a move
   function playMove(playedPiece: Piece, destination: Position): boolean {
+    if(board.totalTurns !== boardHistory.length - 1) {
+      return false;
+    }
     // Checking if the correct team has played the piece
     if (playedPiece.team !== board.currentTeam) return false
 
@@ -30,10 +40,32 @@ export default function Arbiter() {
     // playMove modifies the board state
     setBoard((board) => {
       const clonedBoard = board.clone()
-
       // Playing a move
       clonedBoard.playMove(playedPiece, destination)
+      setBoardHistory([...boardHistory, clonedBoard])
+      //getting the algebraic notation of the move
+      let move = getAlgebraicNotation(playedPiece, destination)
 
+      //checking if the move leads to check
+      let chk=false;
+      const kings=clonedBoard.pieces.filter((p) => p.isKing && p.team !== playedPiece.team)
+      const currentTeamPieces = clonedBoard.pieces.filter((p) => p.team === playedPiece.team)
+      currentTeamPieces.forEach((piece) => {
+        const moves = clonedBoard.getValidMoves(piece,clonedBoard.pieces)
+        if(moves.some((m) => kings.some((k) => k.samePosition(m)))) {
+          chk=true;
+        }
+      })
+      if(chk){
+        move = `${move}+`
+      }
+
+      // Update move history for the current team
+      setMoveHistory((prevHistory) => ({
+        ...prevHistory,
+        [playedPiece.team]: [...prevHistory[playedPiece.team], move],
+      }));
+      //checking if the game is over
       if (clonedBoard.gameOver) {
         checkmateModalRef.current?.classList.remove('hidden')
       }
@@ -59,8 +91,46 @@ export default function Arbiter() {
     }
     return true
   }
-
+  function numberToLetter(num: number): string {
+    // ASCII code for 'a' is 97, so we add (num - 1) to 97
+    return String.fromCharCode(97 + num);
+  }
   // Function to promote a pawn to the desired piece
+  function getAlgebraicNotation(piece: Piece,destination: Position): string {
+    
+    if(piece.isPawn){
+      let chk = board.pieces.some((piece)=>piece.samePosition(destination))
+      return `${numberToLetter(destination.x)}${chk === true?'x':''}${destination.y}`
+    }
+    else if(piece.isKing){
+      let chk = board.pieces.some((piece)=>piece.samePosition(destination))
+      const dist=Math.abs(destination.x-piece.position.x)+Math.abs(destination.y-piece.position.y)
+      if(dist===3){
+        return 'O-O'
+      }
+      else if(dist===4){
+        return 'O-O-O'
+      }
+      return `K${chk === true?'x':''}${numberToLetter(destination.x)}${destination.y}`
+    }
+    else if(piece.isQueen){
+      let chk = board.pieces.some((piece)=>piece.samePosition(destination))
+      return `Q${chk === true?'x':''}${numberToLetter(destination.x)}${destination.y}`
+    }
+    else if(piece.isRook){
+      let chk = board.pieces.some((piece)=>piece.samePosition(destination))
+      return `R${chk === true?'x':''}${numberToLetter(destination.x)}${destination.y}`
+    }
+    else if(piece.isBishop){
+      let chk = board.pieces.some((piece)=>piece.samePosition(destination))
+      return `B${chk === true?'x':''}${numberToLetter(destination.x)}${destination.y}`
+    }
+    else if(piece.isKnight){
+      let chk = board.pieces.some((piece)=>piece.samePosition(destination))
+      return `N${chk === true?'x':''}${numberToLetter(destination.x)}${destination.y}`
+    }
+    return "#"
+  }
   function promotePawn(pieceType: PieceType) {
     if (promotionPawn === undefined) {
       return
@@ -85,7 +155,27 @@ export default function Arbiter() {
 
       return clonedBoard
     })
-
+    
+    //updating the move history when pawn is promoted
+    let promotionNotation="";
+    if(pieceType===PieceType.ROOK){
+      promotionNotation='=R'
+    }
+    else if(pieceType===PieceType.KNIGHT){
+      promotionNotation='=N'
+    }
+    else if(pieceType===PieceType.BISHOP){
+      promotionNotation='=B'
+    }
+    else if(pieceType===PieceType.QUEEN){
+      promotionNotation='=Q'
+    }
+    let teamHistory =moveHistory[promotionPawn.team]
+    teamHistory[teamHistory.length-1]=teamHistory[teamHistory.length-1]+promotionNotation
+    setMoveHistory((prevHistory) => ({
+      ...prevHistory,
+      [promotionPawn.team]: [...teamHistory],
+    }));
     // Toggling the modal
     modalRef.current?.classList.add('hidden')
   }
@@ -120,11 +210,21 @@ export default function Arbiter() {
     N: 'Knight',
     P: 'Pawn',
   }
-
+  function gotToMove(moveNumber:number){
+    if(moveNumber >= 0 && moveNumber<boardHistory.length){
+      setBoard(boardHistory[moveNumber])
+    }
+  }
   function restartGame() {
     checkmateModalRef.current?.classList.add('hidden')
-
+    setBoardHistory([initialBoard.clone()])
     setBoard(initialBoard.clone())
+    setMoveHistory({
+      [TeamType.RED]: [],
+      [TeamType.BLUE]: [],
+      [TeamType.YELLOW]: [],
+      [TeamType.GREEN]: [],
+    });
   }
   
   return (
@@ -186,6 +286,43 @@ export default function Arbiter() {
         loseOrder={board.loseOrder}
         isChecked={board.isChecked}
       />
+     <div className="move-history">
+        <button 
+          disabled={board.totalTurns === 0}
+          onClick={() => gotToMove(board.totalTurns - 1)}
+        >
+          Previous
+        </button>
+        <span style={{color: 'white'}}>Move {board.totalTurns} of {boardHistory.length - 1}</span>
+        <button 
+          disabled={board.totalTurns === boardHistory.length - 1}
+          onClick={() => gotToMove(board.totalTurns + 1)}
+        >
+          Next
+        </button>
+      </div>
+      <div className="move-history-list" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', color: 'white'}}>
+        <table>
+          <thead>
+            <tr>
+              <th>Red</th>
+              <th>Blue</th>
+              <th>Yellow</th>
+              <th>Green</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Array.from({ length: Math.max(...Object.values(moveHistory).map(moves => moves.length)) }).map((_, index) => (
+              <tr key={index}>
+                <td>{moveHistory[TeamType.RED][index] || ''}</td>
+                <td>{moveHistory[TeamType.BLUE][index] || ''}</td>
+                <td>{moveHistory[TeamType.YELLOW][index] || ''}</td>
+                <td>{moveHistory[TeamType.GREEN][index] || ''}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   )
 }
