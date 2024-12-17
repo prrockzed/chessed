@@ -29,7 +29,7 @@
   align-items: center;
   justify-content: space-around;
   gap: 10px;
-  height: 20vh;
+  height: fit-content;
   width: calc(var(--tile-size) * 14);
   background-color: rgba(0, 0, 0, 0.75);
 }
