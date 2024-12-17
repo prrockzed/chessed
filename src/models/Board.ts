@@ -153,7 +153,6 @@ export class Board {
       }
     }
   }
-
   get isChecked() {
     const simulatedBoard = this.clone()
     const king = simulatedBoard.pieces.find(
@@ -168,7 +167,6 @@ export class Board {
           .some((m) => m.samePosition(king.position))
       )
   }
-
   // Getting the valid moves of the pieces which is being played
   getValidMoves(piece: Piece, boardState: Piece[]): Position[] {
     switch (piece.type) {
