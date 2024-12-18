@@ -138,22 +138,22 @@ export default function Arbiter() {
         <div className='modal-body'>
           <img
             onClick={() => promotePawn(PieceType.ROOK)}
-            src={`${basePath}/assets/images/${promotionTeamType()}R.png`}
+            src={`${basePath}assets/images/${promotionTeamType()}R.png`}
             alt='Rook'
           />
           <img
             onClick={() => promotePawn(PieceType.KNIGHT)}
-            src={`${basePath}/assets/images/${promotionTeamType()}N.png`}
+            src={`${basePath}assets/images/${promotionTeamType()}N.png`}
             alt='Knight'
           />
           <img
             onClick={() => promotePawn(PieceType.BISHOP)}
-            src={`${basePath}/assets/images/${promotionTeamType()}B.png`}
+            src={`${basePath}assets/images/${promotionTeamType()}B.png`}
             alt='Bishop'
           />
           <img
             onClick={() => promotePawn(PieceType.QUEEN)}
-            src={`${basePath}/assets/images/${promotionTeamType()}Q.png`}
+            src={`${basePath}assets/images/${promotionTeamType()}Q.png`}
             alt='Queen'
           />
         </div>
@@ -171,7 +171,7 @@ export default function Arbiter() {
                     <td>{teamNames[team]}</td>
                     <td>
                       <img
-                        src={`${basePath}/assets/images/${team}${lbPieces[i]}.png`}
+                        src={`${basePath}assets/images/${team}${lbPieces[i]}.png`}
                         alt={`${teamNames[team]} ${pieceNames[lbPieces[i]]}`}
                       />
                     </td>
