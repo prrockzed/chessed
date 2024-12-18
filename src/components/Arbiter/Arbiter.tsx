@@ -94,14 +94,18 @@ export default function Arbiter() {
 
   // Deciding the type of color of the pieces when opening the modal
   function promotionTeamType() {
-    if (promotionPawn?.team === TeamType.RED) {
-      return 'r'
-    } else if (promotionPawn?.team === TeamType.BLUE) {
-      return 'b'
-    } else if (promotionPawn?.team === TeamType.YELLOW) {
-      return 'y'
-    } else if (promotionPawn?.team === TeamType.GREEN) {
-      return 'g'
+    if (promotionPawn && promotionPawn.team) {
+      if (promotionPawn.team === TeamType.RED) {
+        return 'r'
+      } else if (promotionPawn.team === TeamType.BLUE) {
+        return 'b'
+      } else if (promotionPawn.team === TeamType.YELLOW) {
+        return 'y'
+      } else if (promotionPawn.team === TeamType.GREEN) {
+        return 'g'
+      }
+    } else {
+      return 'r'; // defaulting to red team at initial state
     }
   }
 
@@ -128,7 +132,7 @@ export default function Arbiter() {
 
     setBoard(initialBoard.clone())
   }
-  
+
   return (
     <>
       <div className='modal hidden' ref={modalRef}>
