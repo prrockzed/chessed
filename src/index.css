@@ -6,6 +6,16 @@
   --chess-piece-size: calc(var(--tile-size) * 0.85);
   --tile-highlight-size: calc(var(--tile-size) * 0.25);
   --tile-highlight-chess-piece-size: calc(var(--tile-size) * 0.9);
+
+  /* color palette */
+  --dark-tile-color: #ababab;
+  --light-tile-color: #dcdcdc;
+  --useless-tile-color: black;
+  --checked-tile-gradient: radial-gradient(circle, red 20%, white 80%);
+  --primary-text-color: black;
+  --secondary-text-color: white;
+  --app-background-color: black;
+  --button-background-color: #779556;
 }
 
 body {

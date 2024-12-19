@@ -2,6 +2,6 @@
   display: grid;
   place-content: center;
   height: 100vh;
-  background-color: black;
+  background-color: var(--app-background-color);
 }
 

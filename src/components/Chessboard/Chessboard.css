@@ -4,7 +4,7 @@
   grid-template-rows: repeat(14, var(--tile-size));
   width: calc(var(--tile-size) * 14);
   height: calc(var(--tile-size) * 14);
-  background-color: black;
+  background-color: var(--app-background-color);
 }
 
 .modal {
@@ -60,7 +60,7 @@
 
 .modal > .modal-body > .checkmate-body .team {
   font-size: 20px;
-  color: white;
+  color: var(--secondary-text-color);
 }
 
 .modal > .modal-body > .checkmate-body td:nth-child(2) {
@@ -68,12 +68,12 @@
 }
 
 .modal > .modal-body > .checkmate-body > button {
-  background-color: #779556;
+  background-color: var(--button-background-color);
   border: none;
   border-radius: 8px;
   padding: 16px;
   font-size: 28px;
-  color: white;
+  color: var(--secondary-text-color);
 }
 
 .modal > .modal-body > .checkmate-body > button:hover {
