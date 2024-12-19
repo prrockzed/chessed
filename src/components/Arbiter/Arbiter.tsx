@@ -4,6 +4,8 @@ import { initialBoard } from '../../Constants'
 import { PieceType, TeamType } from '../../Types'
 import { Piece, Position } from '../../models'
 import { useRef, useState } from 'react'
+import { ChessProvider } from '../context/ChessContext'
+import ChessWrapper from '../ChessWrapper/ChessWrapper'
 
 export default function Arbiter() {
   // Declaring the constants
@@ -91,16 +93,19 @@ export default function Arbiter() {
   }
 
   // Deciding the type of color of the pieces when opening the modal
-  function promotionTeamType() {
-    if (promotionPawn?.team === TeamType.RED) {
-      return 'r'
-    } else if (promotionPawn?.team === TeamType.BLUE) {
-      return 'b'
-    } else if (promotionPawn?.team === TeamType.YELLOW) {
-      return 'y'
-    } else if (promotionPawn?.team === TeamType.GREEN) {
-      return 'g'
+  function promotionTeamType(): 'r' | 'b' | 'y' | 'g' {
+    if (promotionPawn && promotionPawn.team) {
+      if (promotionPawn.team === TeamType.RED) {
+        return 'r'
+      } else if (promotionPawn.team === TeamType.BLUE) {
+        return 'b'
+      } else if (promotionPawn.team === TeamType.YELLOW) {
+        return 'y'
+      } else if (promotionPawn.team === TeamType.GREEN) {
+        return 'g'
+      }
     }
+    return 'r'; // defaulting to red team at initial state
   }
 
   // Writing the full name of the winning team
@@ -126,29 +131,29 @@ export default function Arbiter() {
 
     setBoard(initialBoard.clone())
   }
-  
+
   return (
     <>
       <div className='modal hidden' ref={modalRef}>
         <div className='modal-body'>
           <img
             onClick={() => promotePawn(PieceType.ROOK)}
-            src={`${basePath}/assets/images/${promotionTeamType()}R.png`}
+            src={`${basePath}assets/images/${promotionTeamType()}R.png`}
             alt='Rook'
           />
           <img
             onClick={() => promotePawn(PieceType.KNIGHT)}
-            src={`${basePath}/assets/images/${promotionTeamType()}N.png`}
+            src={`${basePath}assets/images/${promotionTeamType()}N.png`}
             alt='Knight'
           />
           <img
             onClick={() => promotePawn(PieceType.BISHOP)}
-            src={`${basePath}/assets/images/${promotionTeamType()}B.png`}
+            src={`${basePath}assets/images/${promotionTeamType()}B.png`}
             alt='Bishop'
           />
           <img
             onClick={() => promotePawn(PieceType.QUEEN)}
-            src={`${basePath}/assets/images/${promotionTeamType()}Q.png`}
+            src={`${basePath}assets/images/${promotionTeamType()}Q.png`}
             alt='Queen'
           />
         </div>
@@ -166,7 +171,7 @@ export default function Arbiter() {
                     <td>{teamNames[team]}</td>
                     <td>
                       <img
-                        src={`${basePath}/assets/images/${team}${lbPieces[i]}.png`}
+                        src={`${basePath}assets/images/${team}${lbPieces[i]}.png`}
                         alt={`${teamNames[team]} ${pieceNames[lbPieces[i]]}`}
                       />
                     </td>
@@ -179,13 +184,16 @@ export default function Arbiter() {
         </div>
       </div>
 
-      <Chessboard
-        playMove={playMove}
-        pieces={board.pieces}
-        whoseTurn={board.currentTeam}
-        loseOrder={board.loseOrder}
-        isChecked={board.isChecked}
-      />
+      <ChessProvider whoseTurn={board.currentTeam}>
+        <ChessWrapper loseOrder={board.loseOrder}>
+          <Chessboard
+            playMove={playMove}
+            pieces={board.pieces}
+            loseOrder={board.loseOrder}
+            isChecked={board.isChecked}
+          />
+        </ChessWrapper>
+      </ChessProvider>
     </>
   )
 }

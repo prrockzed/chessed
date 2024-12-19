@@ -5,9 +5,6 @@ import { PieceType, TeamType } from './Types'
 export const VERTICAL_AXIS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 export const HORIZONTAL_AXIS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
-// Grid Size
-export const GRID_SIZE = 50
-
 // InitialBoardState
 export const initialBoard: Board = new Board(
   [
@@ -87,7 +84,7 @@ export const initialBoard: Board = new Board(
     new Piece(new Position(12, 9), PieceType.PAWN, TeamType.GREEN, false),
     new Piece(new Position(12, 10), PieceType.PAWN, TeamType.GREEN, false),
   ],
-  0
+  1
 )
 
 initialBoard.calculateAllMoves()
