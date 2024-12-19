@@ -185,7 +185,7 @@ export default function Arbiter() {
       </div>
 
       <ChessProvider whoseTurn={board.currentTeam}>
-        <ChessWrapper>
+        <ChessWrapper loseOrder={board.loseOrder}>
           <Chessboard
             playMove={playMove}
             pieces={board.pieces}
