@@ -1,0 +1,81 @@
+.game-layout {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 10px;
+}
+
+.game-layout > .middle-panel {
+  display: flex;
+  gap: 10px;
+}
+
+.game-layout > .panel-area,
+.game-layout > .middle-panel > .panel-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.middle-panels > .player-panel {
+  writing-mode: vertical-rl;
+  height: calc(var(--tile-size) * 8);
+  width: 0.5vw;
+  padding: 0 12px;
+}
+
+.game-layout > .panel-area > .player-panel {
+  height: 0.5vw;
+  width: calc(var(--tile-size) * 8);
+  padding: 12px 0;
+}
+
+div#left-panel {
+  transform: rotate(-180deg);
+}
+
+.player-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: calc(var(--tile-size) * 0.1);
+}
+
+.game-display {
+  display: none;
+}
+
+@media all and (max-width: 700px) {
+  /* phone styles here */
+  .game-layout {
+    padding: 4vh 4vw;
+  }
+
+  .player-panel > .player-name {
+    display: none;
+  }
+
+  .middle-panels > .player-panel {
+    padding: 0;
+    width: 5px;
+    border-radius: 1px;
+  }
+
+  .game-layout > .panel-area > .player-panel {
+    padding: 0;
+    height: 5px;
+    border-radius: 1px;
+  }
+
+  .game-display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .game-display > .currentPlayerDisplay {
+    color: var(--secondary-text-color);
+    padding: 2px 10px;
+    border-radius: calc(1rem + 2px);
+  }
+}

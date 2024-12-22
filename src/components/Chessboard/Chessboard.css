@@ -1,19 +1,23 @@
 #chessboard {
   display: grid;
-  grid-template-columns: repeat(14, 50px);
-  grid-template-rows: repeat(14, 50px);
-  width: 700px;
-  height: 700px;
-  background-color: black;
+  grid-template-columns: repeat(14, var(--tile-size));
+  grid-template-rows: repeat(14, var(--tile-size));
+  width: calc(var(--tile-size) * 14);
+  height: calc(var(--tile-size) * 14);
+  background-color: var(--app-background-color);
 }
 
 .modal {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
-  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100dvw;
+  height: 100dvh;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 20;
 }
 
 .modal.hidden {
@@ -21,21 +25,18 @@
 }
 
 .modal > .modal-body {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: calc(50% - 350px);
   display: flex;
   align-items: center;
   justify-content: space-around;
-  width: 700px;
+  gap: 10px;
+  height: fit-content;
+  width: calc(var(--tile-size) * 14);
   background-color: rgba(0, 0, 0, 0.75);
-  padding: 20px 0;
 }
 
 .modal > .modal-body > img {
-  height: 90px;
-  padding: 20px;
+  width: 100%;
+  padding: 10px;
   border-radius: 50%;
 }
 
@@ -47,19 +48,19 @@
 .modal > .modal-body > .checkmate-body {
   display: flex;
   flex-direction: column;
+  padding: 10px;
   gap: 24px;
   width: 45%;
 }
 
 .modal > .modal-body > .checkmate-body > span {
-  font-size: 28px;
-  color: white;
+  font-size: 1.5rem;
   text-align: center;
 }
 
 .modal > .modal-body > .checkmate-body .team {
   font-size: 20px;
-  color: white;
+  color: var(--secondary-text-color);
 }
 
 .modal > .modal-body > .checkmate-body td:nth-child(2) {
@@ -67,12 +68,12 @@
 }
 
 .modal > .modal-body > .checkmate-body > button {
-  background-color: #779556;
+  background-color: var(--button-background-color);
   border: none;
   border-radius: 8px;
   padding: 16px;
   font-size: 28px;
-  color: white;
+  color: var(--secondary-text-color);
 }
 
 .modal > .modal-body > .checkmate-body > button:hover {
