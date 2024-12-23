@@ -288,19 +288,26 @@ export const getCastlingMoves = (
   king: Piece,
   boardState: Piece[]
 ): Position[] => {
-  const possibleMoves: Position[] = []
+  const possibleMoves: Position[] = [];
 
-  if (king.hasMoved) return possibleMoves
+  // Castling is not allowed if the king has moved
+  if (king.hasMoved) return possibleMoves;
 
   // Get unmoved rooks from the king's team
   const rooks = boardState.filter(
     (p) => p.isRook && p.team === king.team && !p.hasMoved
-  )
+  );
 
-  // For red and yellow rooks
-  // Loop through the rooks
+  // Check if the king is in check
+  const enemyPieces = boardState.filter((p) => p.team !== king.team);
+  const isKingInCheck = enemyPieces.some((enemy) =>
+    enemy.possibleMoves?.some((move) => move.samePosition(king.position))
+  );
+
+  if (isKingInCheck) return possibleMoves; // Castling not allowed if king is in check
+
+  // Loop through the rooks to determine valid castling moves
   for (const rook of rooks) {
-    // Determine if we have to go to right or left
     const direction =
       rook.team === TeamType.RED || rook.team === TeamType.YELLOW
         ? rook.position.x - king.position.x > 0
@@ -308,50 +315,39 @@ export const getCastlingMoves = (
           : -1
         : rook.position.y - king.position.y > 0
         ? 1
-        : -1
+        : -1;
 
-    const adjacentPosition = king.position.clone()
-    if (king.team === TeamType.RED || king.team === TeamType.YELLOW) {
-      adjacentPosition.x += direction
-    } else {
-      adjacentPosition.y += direction
-    }
-
-    if (!rook.possibleMoves?.some((m) => m.samePosition(adjacentPosition)))
-      continue
-
-    const concerningTiles =
-      king.team === TeamType.RED || king.team === TeamType.YELLOW
-        ? rook.possibleMoves.filter((m) => m.y === king.position.y)
-        : rook.possibleMoves.filter((m) => m.x === king.position.x)
-
-    // Filter out the enemy
-    const enemyPieces = boardState.filter((p) => p.team !== king.team)
-
-    let valid = true
-
-    // Looping through all enemy pieces
-    for (const enemy of enemyPieces) {
-      if (enemy.possibleMoves === undefined) continue
-
-      // Checking if the concerned tiles for castling has the same position
-      // as the possible moves of the enemy
-      for (const move of enemy.possibleMoves) {
-        if (concerningTiles.some((t) => t.samePosition(move))) {
-          valid = false
-        }
-
-        if (!valid) break
+    // Check the path between the king and the rook
+    const path: Position[] = [];
+    const currentPosition = king.position.clone();
+    while (!currentPosition.samePosition(rook.position)) {
+      if (king.team === TeamType.RED || king.team === TeamType.YELLOW) {
+        currentPosition.x += direction;
+      } else {
+        currentPosition.y += direction;
       }
-
-      if (!valid) break
+      path.push(currentPosition.clone());
     }
 
-    if (!valid) continue
+    // Exclude the rook's position from the path
+    path.pop();
 
-    // We now want to add it as a possible move
-    possibleMoves.push(rook.position.clone())
+    // Ensure all tiles in the path are not under attack and are empty
+    const isPathClear = path.every((tile) => {
+      const isTileEmpty = !boardState.some((piece) =>
+        piece.position.samePosition(tile)
+      );
+      const isTileSafe = !enemyPieces.some((enemy) =>
+        enemy.possibleMoves?.some((move) => move.samePosition(tile))
+      );
+      return isTileEmpty && isTileSafe;
+    });
+
+    if (!isPathClear) continue;
+
+    // Add the rook's position as a valid castling move
+    possibleMoves.push(rook.position.clone());
   }
 
-  return possibleMoves
-}
+  return possibleMoves;
+};
